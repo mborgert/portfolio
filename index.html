@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+
+<title></title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/journal.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 61px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 66px;
+  margin-top: -66px;
+}
+
+.section h2 {
+  padding-top: 66px;
+  margin-top: -66px;
+}
+.section h3 {
+  padding-top: 66px;
+  margin-top: -66px;
+}
+.section h4 {
+  padding-top: 66px;
+  margin-top: -66px;
+}
+.section h5 {
+  padding-top: 66px;
+  margin-top: -66px;
+}
+.section h6 {
+  padding-top: 66px;
+  margin-top: -66px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+
+
+<div class="navbar navbar-inverse  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Data Fest 2018</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="schedule.html">Schedule</a>
+</li>
+<li>
+  <a href="sponsors.html">Sponsors</a>
+</li>
+<li>
+  <a href="https://docs.google.com/forms/d/e/1FAIpQLSf6lrnab-gm-ds5xsi8Ss5j3E-ZTUc0ipSNQYOEvSzRbkoKhw/viewform">
+    <span class="fa fa-user-plus"></span>
+     
+    Register
+  </a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="faq.html">
+    <span class="fa fa-question"></span>
+     
+    FAQ
+  </a>
+</li>
+<li>
+  <a href="past_events.html">Past Events</a>
+</li>
+<li>
+  <a href="code_of_conduct.html">Code of Conduct</a>
+</li>
+<li>
+  <a href="contact.html">
+    <span class="fa fa-envelope-o"></span>
+     
+    Contact
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+
+</div>
+
+
+<div class="figure">
+<img src="images/datafest_logo_chico_red.png" />
+
+</div>
+<div id="about-datafest" class="section level1">
+<h1>About DataFest</h1>
+<p>DataFest is a nationally-coordinated undergraduate competition in which teams of up to 5 students work over a weekend to extract insight from a rich and complex data set. Previous years’ data sets have included crime data from the LAPD, dating data from eHarmony, and energy use data from GridPoint. This year’s data set will be revealed at the opening of the event on Friday evening.</p>
+<p>At the conclusion of the competition, each team will have 5 minutes and 2 slides to make a presentation to a panel of judges. Judges will select teams to win prizes for areas such as “Best Insight”, “Best Visualization”, “Best use of external data”, and one judges’s personal favorite “Best Garbage Detection”.</p>
+<p>The mission of DataFest is to expose undergraduate students to challenging questions with immediate real-world significance that can be addressed through data analysis. By working in teams, students with varying skill sets will combine their efforts and expand their collective data analysis horizons. Interaction among students, as well as with outside consultants will promote the sense that data analysis is a dynamic, engaging, and vibrant part of our society, as well as a realistic, practical, and fun career path.</p>
+<div id="use-the-link-in-the-navigation-bar-to-register-today" class="section level4">
+<h4>Use the link in the navigation bar to register today!</h4>
+<ul>
+<li><strong>Registration is now closed.</strong></li>
+<li>Interested in helping out at the event? Check out the <strong>How to help</strong> section on the <a href="faq.html">Faq</a> page.</li>
+</ul>
+<hr />
+</div>
+<div id="where-else-is-asa-datafesttm-happening" class="section level2">
+<h2>Where else is ASA DataFestTM happening?</h2>
+<p>ASA DataFestTM is growing fast! It is being held at 61 institutions this year. If you are interested in holding ASA DataFestTM at your institution, visit the official <a href="https://ww2.amstat.org/education/datafest/">[ASA DataFest]</a> webpage to get more information on the event.</p>
+<div class="figure">
+<img src="images/participants.jpg" />
+
+</div>
+<hr />
+<div style="text-align:center" markdown="1">
+<div class="figure">
+<img src="images/DataFestFlyer.PNG" />
+
+</div>
+</div>
+</div>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

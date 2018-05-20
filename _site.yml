@@ -1,0 +1,31 @@
+name: "CSUC DataFest"
+output_dir: "."
+navbar:
+  title: "Data Fest 2018"
+  type: inverse
+  left:
+    - text: "Schedule"
+      href: schedule.html
+    - text: "Sponsors"
+      href: sponsors.html
+    - text: "Register"
+      icon: fa-user-plus
+      href: https://docs.google.com/forms/d/e/1FAIpQLSf6lrnab-gm-ds5xsi8Ss5j3E-ZTUc0ipSNQYOEvSzRbkoKhw/viewform 
+  right: 
+    - text: "FAQ"
+      icon: fa-question
+      href: faq.html
+    - text: "Past Events"
+      href: past_events.html
+    - text: "Code of Conduct"
+      href: code_of_conduct.html
+    - text: "Contact"
+      icon: fa-envelope-o
+      href: contact.html
+
+      
+output:
+  html_document:
+    theme: journal
+    highlight: tango
+    css: style.css
