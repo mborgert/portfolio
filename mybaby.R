@@ -1,0 +1,114 @@
+library(rvest)
+library(stringr)
+library(lubridate)
+
+events = read_html("https://www.onthisday.com/events/date/2017")
+
+rank_data_html <- html_nodes(events,'.mc-closeModal , .event-list__item')
+
+rank_data <- html_text(rank_data_html)
+extdata = data.frame(rank_data)
+
+df1 = data.frame(matrix(ncol = 3, nrow = 161))
+
+for(i in 1:161){
+  splits = str_split(extdata[i,], " ")
+  df1[i,1] = splits[[1]][1]
+  df1[i,2] = splits[[1]][2]
+  df1[i,3] = str_flatten(splits[[1]][3:length(splits[[1]])], " ")
+}
+
+events2 = read_html("https://www.onthisday.com/events/date/2017?p=2")
+
+rank_data_html2 <- html_nodes(events2,'.event-list__item')
+
+rank_data2 <- html_text(rank_data_html2)
+extdata2 = data.frame(rank_data2)
+
+df2 = data.frame(matrix(ncol = 3, nrow = 166))
+
+for(i in 1:166){
+  splits = str_split(extdata2[i,], " ")
+  df2[i,1] = splits[[1]][1]
+  df2[i,2] = splits[[1]][2]
+  df2[i,3] = str_flatten(splits[[1]][3:length(splits[[1]])], " ")
+}
+
+
+events2 = read_html("https://www.onthisday.com/events/date/2017?p=3")
+
+rank_data_html2 <- html_nodes(events2,'.event-list__item')
+
+rank_data2 <- html_text(rank_data_html2)
+extdata2 = data.frame(rank_data2)
+
+df3 = data.frame(matrix(ncol = 3, nrow = 172))
+
+for(i in 1:172){
+  splits = str_split(extdata2[i,], " ")
+  df3[i,1] = splits[[1]][1]
+  df3[i,2] = splits[[1]][2]
+  df3[i,3] = str_flatten(splits[[1]][3:length(splits[[1]])], " ")
+}
+
+events2 = read_html("https://www.onthisday.com/events/date/2017?p=4")
+
+rank_data_html2 <- html_nodes(events2,'.event-list__item')
+
+rank_data2 <- html_text(rank_data_html2)
+extdata2 = data.frame(rank_data2)
+
+df4 = data.frame(matrix(ncol = 3, nrow = 121))
+
+for(i in 1:121){
+  splits = str_split(extdata2[i,], " ")
+  df4[i,1] = splits[[1]][1]
+  df4[i,2] = splits[[1]][2]
+  df4[i,3] = str_flatten(splits[[1]][3:length(splits[[1]])], " ")
+}
+
+events2 = read_html("https://www.onthisday.com/events/date/2016?p=2")
+
+rank_data_html2 <- html_nodes(events2,'.event-list__item')
+
+rank_data2 <- html_text(rank_data_html2)
+extdata2 = data.frame(rank_data2)
+
+df5 = data.frame(matrix(ncol = 3, nrow = 145))
+
+for(i in 1:145){
+  splits = str_split(extdata2[i,], " ")
+  df5[i,1] = splits[[1]][1]
+  df5[i,2] = splits[[1]][2]
+  df5[i,3] = str_flatten(splits[[1]][3:length(splits[[1]])], " ")
+}
+
+df5$year = 2016
+
+colnames(df5) = c("month", "day", "event","year")
+df5 = df5[c("year", "month", "day","event")]
+
+events2017 = dplyr::bind_rows(df1,df2,df3,df4)
+
+colnames(events2017) = c('month','day','event')
+events2017$year = 2017
+events2017 = events2017[c("year", "month", "day","event")]
+
+events = dplyr::bind_rows(df5, events2017)
+
+
+events$date = NA
+
+for(i in 1:765){
+  events$date[i] = ymd(str_flatten(events[i,1:3], '-'))
+}
+
+events$date = as.Date(events[,"date"], origin="1970-01-01")
+
+events = events[c("date", "event")]
+
+events = events[-c(1:91),]
+
+unique = unique(events$date)
+
+write.csv(events,"events_my_precious2.csv")
