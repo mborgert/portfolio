@@ -1,0 +1,199 @@
+---
+title: "Fake News Project"
+author: "Mitch Borgert, Jerry Tucay, Aaron Schaffer"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(haven)
+library(dplyr)
+library(ggplot2)
+library(magrittr)
+library(gridExtra)
+data = read_sav("C:/Users/mitch/Documents/portfolio/data/fakenews.sav")
+
+
+pewdata <- data %$% data.frame(pew1 = factor(replace(pew1,pew1 == 9,NA),labels = c("Often","Sometimes","Hardly ever","Never")),
+                               pew2 = factor(replace(pew2,pew2 == 9,NA),labels = c("Often","Sometimes","Hardly ever","Never")),
+                               pew3 = factor(replace(pew3,pew3 == 9,NA),labels = c("Yes","No")),
+                               pew4 = factor(replace(pew4,pew4 == 9,NA),labels = c("Yes","No")),
+                               pew5a = factor(replace(pew5a,pew5a == 9,NA),labels = c("A great deal","A fair amount","Not much","None at all")),
+                               pew5b = factor(replace(pew5b,pew5b == 9,NA),labels = c("A great deal","A fair amount","Not much","None at all")),
+                               pew5c = factor(replace(pew5c,pew5c == 9,NA),labels = c("A great deal","A fair amount","Not much","None at all")),
+                               pew6 = factor(replace(pew6,pew6 == 9,NA),labels = c("Very","Somewhat","Not very","Not at all")),
+                               pew7 = factor(replace(pew7,pew7 == 9,NA),labels = c("Very","Somewhat","Not very","Not at all")),
+                               sex = factor(sex,labels =c("Male","Female")),
+                               age = as.numeric(age),
+                               educ2 = factor(replace(educ2,educ2 == 9, NA),labels =c("Less than high school","High school incomplete","High school graduate","Some college","Associate degree","Bachelor degree","Some postgraduate","Postgraduate")),
+                               relig = factor(replace(relig,relig == 99, NA),labels =c("Protestant","Roman Catholic","Mormon","Orthodox","Jewish","Muslim","Buddhist","Hindu","Atheist","Agnostic","Something else","Nothin in particulat","Christian","Unitarian")),
+                               chr = factor(replace(chr, chr == 9, NA),labels =c("Yes","No")),
+                               born = factor(replace(born, born == 9, NA),labels =c("Yes,world","No, would not")),
+                               race = factor(replace(race,race == 9, NA),labels =c("White","Black or African American","Asian or Pacific Islander","Mixed race","Native American/American Indian","Other")),
+                               inc = factor(replace(inc, inc == 99, NA),labels =c("Less than $10,000","$10,000 to under $20,000","$20,000 to under $30,000","$30,000 to under $40,000","$40,000 to under $50,000","$50,000 to under $75,000","$100,000 to under $150,000","$150,000 or over",NA)),
+                               reg = factor(replace(reg, reg == 9, NA),labels=c(" Are you ABSOLUTELY CERTAIN that you are registered to vote at your current address","Are you PROBABLY registered, but there is a chance your registration has lapsed","Are you NOT registered to vote at your current address")),
+                               party = factor(replace(party,party == 9, NA),labels=c("Republican","Democrat","Independent","No preference","Other party")),
+                               partyln = factor(replace(partyln,partyln == 9, NA),labels = c("Republican","Democratic")),
+                               ideo = factor(replace(ideo,ideo == 9, NA),labels=c("Very conservative","Conservative","Moderate","Libaral","Very libaral")))
+
+```
+
+```{r}
+library(tidyr)
+library(dplyr)
+library(ggplot2)
+library(ROCR)
+library(caret)
+library(questionr)
+library(lmtest)
+library(leaps)
+library(pander)
+library(ResourceSelection)
+library(knitr)
+```
+
+## Political Affiliations of Population
+
+```{r, fig.align='center', echo = FALSE, out.width =1536, out.height=800}
+party   <- ggplot(pewdata,aes(x=party, fill = ideo, group = ideo)) + 
+  geom_bar(position = 'dodge') +
+  geom_text(stat = 'count', position=position_dodge(width = 1),
+            aes(y = ..count..,  label = ..count.., vjust = 0)) +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 30, hjust = 1),
+        legend.position = c(.7,.8)) + 
+  guides(fill=guide_legend(ncol=2)) +
+  scale_fill_manual(values=c('#BF6200','#FF8300',
+                             '#9F008C','#416000',
+                             '#AEFF00','#000000'),
+                    name = 'Ideology',
+                    na.translate=TRUE,
+                    na.value='#000000') +
+  ggtitle("Political Party")
+party
+```
+
+## Pew Responses
+  
+```{r, fig.align='center', echo = FALSE, out.width =1536, out.height=800}
+library(reshape2)
+
+x <- pewdata[,c('pew1','pew2','pew5a','pew5b','pew5c','pew6','pew7')] %>% sapply(summary)
+pew.df <- data.frame(x) %>% as.matrix %>% melt()
+ggplot(aes(x = Var2, y = value, fill = Var1, label = value), data = pew.df) +
+  theme_classic() +
+  geom_bar(stat = "identity") +
+  geom_text(position = position_stack(vjust = 0.5), size = 3) + 
+  xlab("Pew Question") +
+  scale_fill_brewer(palette='Paired', name = "Response")
+
+```
+
+## Pew questions vs Ideology
+
+```{r, fig.align='center', echo = FALSE, out.width =1536, out.height=800,message=FALSE}
+
+pew1ideo = pewdata %>% select(pew1,ideo) %>% na.omit()  
+pew1ideotable = data.frame(prop.table(table(pew1ideo),margin=2))
+p11= ggplot(pew1ideotable, aes(x=pew1,y=Freq,fill = ideo)) + geom_bar(position = "dodge",stat="identity") +
+  geom_text(stat = 'count', position=position_dodge(width = 1),
+            aes(y = ..count..,  label = ..count.., vjust = 0)) +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 30, hjust = 1),
+        legend.position = c(.9,.7))
+
+pew2ideo = pewdata %>% select(pew2,ideo) %>% na.omit()  
+pew2ideotable = data.frame(prop.table(table(pew2ideo),margin=2))
+p21 = ggplot(pew2ideotable, aes(x=pew2,y=Freq,fill = ideo)) + geom_bar(position = "dodge",stat="identity") +
+  geom_text(stat = 'count', position=position_dodge(width = 1),
+            aes(y = ..count..,  label = ..count.., vjust = 0)) +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 30, hjust = 1),
+        legend.position = c(.9,.7))
+
+pew6ideo = pewdata %>% select(pew6,ideo) %>% na.omit()  
+pew6ideotable = data.frame(prop.table(table(pew6ideo),margin=2))
+p61 = ggplot(pew6ideotable, aes(x=pew6,y=Freq,fill = ideo)) + geom_bar(position = "dodge",stat="identity") +
+  geom_text(stat = 'count', position=position_dodge(width = 1),
+            aes(y = ..count..,  label = ..count.., vjust = 0)) +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 30, hjust = 1),
+        legend.position = c(.9,.7))
+
+pew7ideo = pewdata %>% select(pew7,ideo) %>% na.omit()  
+pew7ideotable = data.frame(prop.table(table(pew7ideo),margin=2))
+p71 = ggplot(pew7ideotable, aes(x=pew7,y=Freq,fill = ideo)) + geom_bar(position = "dodge",stat="identity") +
+  geom_text(stat = 'count', position=position_dodge(width = 1),
+            aes(y = ..count..,  label = ..count.., vjust = 0)) +
+  theme_classic() +
+  theme(axis.text.x = element_text(angle = 30, hjust = 1),
+        legend.position = c(.9,.7))
+
+pewideo = grid.arrange(p11,p21,p61,p71) 
+pewideo
+```
+
+```{r}
+levels(pewdata$ideo) = c("Extreme","Moderate" , "Moderate", "Moderate","Extreme")
+pew2 <- pewdata %>% select(pew1,pew2,pew3,pew4,pew5a,pew5b,pew5c,pew6,pew7,ideo,sex,age,educ2) %>% na.omit
+
+mod1 <- glm(ideo~.-ideo,data=pew2,family="binomial")
+summary(mod1)
+model.pred.prob <- predict(mod1, type='response')
+df = data.frame(model.pred.prob)
+summary(df)
+plot.mpp <- data.frame(prediction = model.pred.prob, 
+                       truth = factor(mod1$y, labels=c("Extreme", "Moderate")))
+
+ggplot(plot.mpp, aes(x=truth, y=prediction, fill=truth)) + 
+      geom_jitter(width=.2) + geom_violin(alpha=.4) + theme_bw() + geom_hline(yintercept=.79)
+
+pr <- prediction(model.pred.prob, mod1$y)
+perf <- performance(pr, measure="tpr", x.measure="fpr")
+plot(perf, colorize=TRUE, lwd=3, print.cutoffs.at=c(seq(0,1,by=0.1)))
+abline(a=0, b=1, lty=2)
+perf.f1 <- performance(pr,measure="f")
+plot(perf.f1)
+
+plot.mpp$pred.class <- ifelse(plot.mpp$prediction <.79, 0,1)
+
+plot.mpp$pred.class <- factor(plot.mpp$pred.class, labels=c("Extreme", "Moderate"))
+
+
+confusionMatrix(plot.mpp$pred.class, plot.mpp$truth, positive="Extreme")
+```
+
+
+```{r}
+levels(pewdata$party)
+levels(pewdata$party) = c("Republican","Democrat" , NA, NA,NA)
+pew2 = pewdata %>% select(pew1,pew2,pew3,pew4,pew5a,pew5b,pew5c,pew6,pew7,party,sex,age,educ2) %>% na.omit
+mod1 = glm(party~.-party,data=pew2,family="binomial")
+
+mod1pp = predict(mod1,type = "response")
+df = data.frame(mod1pp)
+
+plot.mod1pp <- data.frame(prediction = mod1pp, 
+                       truth = factor(mod1$y, labels=c("Republican", "Democrat")))
+
+ggplot(plot.mod1pp, aes(x=truth, y=prediction, fill=truth)) + geom_jitter(width=.2) + geom_violin(alpha=.4) + theme_bw()
+
+
+
+pr <- prediction(mod1pp, mod1$y)
+perf <- performance(pr, measure="tpr", x.measure="fpr")
+plot(perf, colorize=TRUE, lwd=3, print.cutoffs.at=c(seq(0,1,by=0.1)))
+abline(a=0, b=1, lty=2)
+perf.f1 <- performance(pr,measure="f")
+plot(perf.f1)
+
+plot.mod1pp$pred.class <- ifelse(plot.mod1pp$prediction <.49, 0,1)
+plot.mod1pp$pred.class <- factor(plot.mod1pp$pred.class, labels=c("Republican", "Democrat"))
+
+confusionMatrix(plot.mod1pp$pred.class, plot.mod1pp$truth, positive="Republican")
+
+```
+

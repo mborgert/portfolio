@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Mitch Borgert, Jerry Tucay, Aaron Schaffer" />
+
+
+<title>Fake News Project</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/journal.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; background-color: #f8f8f8; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+pre, code { background-color: #f8f8f8; }
+code > span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code > span.dt { color: #204a87; } /* DataType */
+code > span.dv { color: #0000cf; } /* DecVal */
+code > span.bn { color: #0000cf; } /* BaseN */
+code > span.fl { color: #0000cf; } /* Float */
+code > span.ch { color: #4e9a06; } /* Char */
+code > span.st { color: #4e9a06; } /* String */
+code > span.co { color: #8f5902; font-style: italic; } /* Comment */
+code > span.ot { color: #8f5902; } /* Other */
+code > span.al { color: #ef2929; } /* Alert */
+code > span.fu { color: #000000; } /* Function */
+code > span.er { color: #a40000; font-weight: bold; } /* Error */
+code > span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #000000; } /* Constant */
+code > span.sc { color: #000000; } /* SpecialChar */
+code > span.vs { color: #4e9a06; } /* VerbatimString */
+code > span.ss { color: #4e9a06; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #000000; } /* Variable */
+code > span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code > span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code > span.ex { } /* Extension */
+code > span.at { color: #c4a000; } /* Attribute */
+code > span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code > span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 61px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 66px;
+  margin-top: -66px;
+}
+
+.section h2 {
+  padding-top: 66px;
+  margin-top: -66px;
+}
+.section h3 {
+  padding-top: 66px;
+  margin-top: -66px;
+}
+.section h4 {
+  padding-top: 66px;
+  margin-top: -66px;
+}
+.section h5 {
+  padding-top: 66px;
+  margin-top: -66px;
+}
+.section h6 {
+  padding-top: 66px;
+  margin-top: -66px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+
+
+<div class="navbar navbar-inverse  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Portfolio</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="about_me.html">About Me</a>
+</li>
+<li>
+  <a href="contact.html">Contact</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Fake News Project</h1>
+<h4 class="author"><em>Mitch Borgert, Jerry Tucay, Aaron Schaffer</em></h4>
+
+</div>
+
+
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(haven)
+<span class="kw">library</span>(dplyr)
+<span class="kw">library</span>(ggplot2)
+<span class="kw">library</span>(magrittr)
+<span class="kw">library</span>(gridExtra)
+data =<span class="st"> </span><span class="kw">read_sav</span>(<span class="st">&quot;C:/Users/mitch/Documents/portfolio/data/fakenews.sav&quot;</span>)
+
+
+pewdata &lt;-<span class="st"> </span>data <span class="op">%$%</span><span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">pew1 =</span> <span class="kw">factor</span>(<span class="kw">replace</span>(pew1,pew1 <span class="op">==</span><span class="st"> </span><span class="dv">9</span>,<span class="ot">NA</span>),<span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;Often&quot;</span>,<span class="st">&quot;Sometimes&quot;</span>,<span class="st">&quot;Hardly ever&quot;</span>,<span class="st">&quot;Never&quot;</span>)),
+                               <span class="dt">pew2 =</span> <span class="kw">factor</span>(<span class="kw">replace</span>(pew2,pew2 <span class="op">==</span><span class="st"> </span><span class="dv">9</span>,<span class="ot">NA</span>),<span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;Often&quot;</span>,<span class="st">&quot;Sometimes&quot;</span>,<span class="st">&quot;Hardly ever&quot;</span>,<span class="st">&quot;Never&quot;</span>)),
+                               <span class="dt">pew3 =</span> <span class="kw">factor</span>(<span class="kw">replace</span>(pew3,pew3 <span class="op">==</span><span class="st"> </span><span class="dv">9</span>,<span class="ot">NA</span>),<span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;Yes&quot;</span>,<span class="st">&quot;No&quot;</span>)),
+                               <span class="dt">pew4 =</span> <span class="kw">factor</span>(<span class="kw">replace</span>(pew4,pew4 <span class="op">==</span><span class="st"> </span><span class="dv">9</span>,<span class="ot">NA</span>),<span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;Yes&quot;</span>,<span class="st">&quot;No&quot;</span>)),
+                               <span class="dt">pew5a =</span> <span class="kw">factor</span>(<span class="kw">replace</span>(pew5a,pew5a <span class="op">==</span><span class="st"> </span><span class="dv">9</span>,<span class="ot">NA</span>),<span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;A great deal&quot;</span>,<span class="st">&quot;A fair amount&quot;</span>,<span class="st">&quot;Not much&quot;</span>,<span class="st">&quot;None at all&quot;</span>)),
+                               <span class="dt">pew5b =</span> <span class="kw">factor</span>(<span class="kw">replace</span>(pew5b,pew5b <span class="op">==</span><span class="st"> </span><span class="dv">9</span>,<span class="ot">NA</span>),<span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;A great deal&quot;</span>,<span class="st">&quot;A fair amount&quot;</span>,<span class="st">&quot;Not much&quot;</span>,<span class="st">&quot;None at all&quot;</span>)),
+                               <span class="dt">pew5c =</span> <span class="kw">factor</span>(<span class="kw">replace</span>(pew5c,pew5c <span class="op">==</span><span class="st"> </span><span class="dv">9</span>,<span class="ot">NA</span>),<span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;A great deal&quot;</span>,<span class="st">&quot;A fair amount&quot;</span>,<span class="st">&quot;Not much&quot;</span>,<span class="st">&quot;None at all&quot;</span>)),
+                               <span class="dt">pew6 =</span> <span class="kw">factor</span>(<span class="kw">replace</span>(pew6,pew6 <span class="op">==</span><span class="st"> </span><span class="dv">9</span>,<span class="ot">NA</span>),<span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;Very&quot;</span>,<span class="st">&quot;Somewhat&quot;</span>,<span class="st">&quot;Not very&quot;</span>,<span class="st">&quot;Not at all&quot;</span>)),
+                               <span class="dt">pew7 =</span> <span class="kw">factor</span>(<span class="kw">replace</span>(pew7,pew7 <span class="op">==</span><span class="st"> </span><span class="dv">9</span>,<span class="ot">NA</span>),<span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;Very&quot;</span>,<span class="st">&quot;Somewhat&quot;</span>,<span class="st">&quot;Not very&quot;</span>,<span class="st">&quot;Not at all&quot;</span>)),
+                               <span class="dt">sex =</span> <span class="kw">factor</span>(sex,<span class="dt">labels =</span><span class="kw">c</span>(<span class="st">&quot;Male&quot;</span>,<span class="st">&quot;Female&quot;</span>)),
+                               <span class="dt">age =</span> <span class="kw">as.numeric</span>(age),
+                               <span class="dt">educ2 =</span> <span class="kw">factor</span>(<span class="kw">replace</span>(educ2,educ2 <span class="op">==</span><span class="st"> </span><span class="dv">9</span>, <span class="ot">NA</span>),<span class="dt">labels =</span><span class="kw">c</span>(<span class="st">&quot;Less than high school&quot;</span>,<span class="st">&quot;High school incomplete&quot;</span>,<span class="st">&quot;High school graduate&quot;</span>,<span class="st">&quot;Some college&quot;</span>,<span class="st">&quot;Associate degree&quot;</span>,<span class="st">&quot;Bachelor degree&quot;</span>,<span class="st">&quot;Some postgraduate&quot;</span>,<span class="st">&quot;Postgraduate&quot;</span>)),
+                               <span class="dt">relig =</span> <span class="kw">factor</span>(<span class="kw">replace</span>(relig,relig <span class="op">==</span><span class="st"> </span><span class="dv">99</span>, <span class="ot">NA</span>),<span class="dt">labels =</span><span class="kw">c</span>(<span class="st">&quot;Protestant&quot;</span>,<span class="st">&quot;Roman Catholic&quot;</span>,<span class="st">&quot;Mormon&quot;</span>,<span class="st">&quot;Orthodox&quot;</span>,<span class="st">&quot;Jewish&quot;</span>,<span class="st">&quot;Muslim&quot;</span>,<span class="st">&quot;Buddhist&quot;</span>,<span class="st">&quot;Hindu&quot;</span>,<span class="st">&quot;Atheist&quot;</span>,<span class="st">&quot;Agnostic&quot;</span>,<span class="st">&quot;Something else&quot;</span>,<span class="st">&quot;Nothin in particulat&quot;</span>,<span class="st">&quot;Christian&quot;</span>,<span class="st">&quot;Unitarian&quot;</span>)),
+                               <span class="dt">chr =</span> <span class="kw">factor</span>(<span class="kw">replace</span>(chr, chr <span class="op">==</span><span class="st"> </span><span class="dv">9</span>, <span class="ot">NA</span>),<span class="dt">labels =</span><span class="kw">c</span>(<span class="st">&quot;Yes&quot;</span>,<span class="st">&quot;No&quot;</span>)),
+                               <span class="dt">born =</span> <span class="kw">factor</span>(<span class="kw">replace</span>(born, born <span class="op">==</span><span class="st"> </span><span class="dv">9</span>, <span class="ot">NA</span>),<span class="dt">labels =</span><span class="kw">c</span>(<span class="st">&quot;Yes,world&quot;</span>,<span class="st">&quot;No, would not&quot;</span>)),
+                               <span class="dt">race =</span> <span class="kw">factor</span>(<span class="kw">replace</span>(race,race <span class="op">==</span><span class="st"> </span><span class="dv">9</span>, <span class="ot">NA</span>),<span class="dt">labels =</span><span class="kw">c</span>(<span class="st">&quot;White&quot;</span>,<span class="st">&quot;Black or African American&quot;</span>,<span class="st">&quot;Asian or Pacific Islander&quot;</span>,<span class="st">&quot;Mixed race&quot;</span>,<span class="st">&quot;Native American/American Indian&quot;</span>,<span class="st">&quot;Other&quot;</span>)),
+                               <span class="dt">inc =</span> <span class="kw">factor</span>(<span class="kw">replace</span>(inc, inc <span class="op">==</span><span class="st"> </span><span class="dv">99</span>, <span class="ot">NA</span>),<span class="dt">labels =</span><span class="kw">c</span>(<span class="st">&quot;Less than $10,000&quot;</span>,<span class="st">&quot;$10,000 to under $20,000&quot;</span>,<span class="st">&quot;$20,000 to under $30,000&quot;</span>,<span class="st">&quot;$30,000 to under $40,000&quot;</span>,<span class="st">&quot;$40,000 to under $50,000&quot;</span>,<span class="st">&quot;$50,000 to under $75,000&quot;</span>,<span class="st">&quot;$100,000 to under $150,000&quot;</span>,<span class="st">&quot;$150,000 or over&quot;</span>,<span class="ot">NA</span>)),
+                               <span class="dt">reg =</span> <span class="kw">factor</span>(<span class="kw">replace</span>(reg, reg <span class="op">==</span><span class="st"> </span><span class="dv">9</span>, <span class="ot">NA</span>),<span class="dt">labels=</span><span class="kw">c</span>(<span class="st">&quot; Are you ABSOLUTELY CERTAIN that you are registered to vote at your current address&quot;</span>,<span class="st">&quot;Are you PROBABLY registered, but there is a chance your registration has lapsed&quot;</span>,<span class="st">&quot;Are you NOT registered to vote at your current address&quot;</span>)),
+                               <span class="dt">party =</span> <span class="kw">factor</span>(<span class="kw">replace</span>(party,party <span class="op">==</span><span class="st"> </span><span class="dv">9</span>, <span class="ot">NA</span>),<span class="dt">labels=</span><span class="kw">c</span>(<span class="st">&quot;Republican&quot;</span>,<span class="st">&quot;Democrat&quot;</span>,<span class="st">&quot;Independent&quot;</span>,<span class="st">&quot;No preference&quot;</span>,<span class="st">&quot;Other party&quot;</span>)),
+                               <span class="dt">partyln =</span> <span class="kw">factor</span>(<span class="kw">replace</span>(partyln,partyln <span class="op">==</span><span class="st"> </span><span class="dv">9</span>, <span class="ot">NA</span>),<span class="dt">labels =</span> <span class="kw">c</span>(<span class="st">&quot;Republican&quot;</span>,<span class="st">&quot;Democratic&quot;</span>)),
+                               <span class="dt">ideo =</span> <span class="kw">factor</span>(<span class="kw">replace</span>(ideo,ideo <span class="op">==</span><span class="st"> </span><span class="dv">9</span>, <span class="ot">NA</span>),<span class="dt">labels=</span><span class="kw">c</span>(<span class="st">&quot;Very conservative&quot;</span>,<span class="st">&quot;Conservative&quot;</span>,<span class="st">&quot;Moderate&quot;</span>,<span class="st">&quot;Libaral&quot;</span>,<span class="st">&quot;Very libaral&quot;</span>)))</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tidyr)</code></pre></div>
+<pre><code>## 
+## Attaching package: &#39;tidyr&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:magrittr&#39;:
+## 
+##     extract</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(dplyr)
+<span class="kw">library</span>(ggplot2)
+<span class="kw">library</span>(ROCR)</code></pre></div>
+<pre><code>## Warning: package &#39;ROCR&#39; was built under R version 3.4.3</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(caret)</code></pre></div>
+<pre><code>## Warning: package &#39;caret&#39; was built under R version 3.4.3</code></pre>
+<pre><code>## Loading required package: lattice</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(questionr)</code></pre></div>
+<pre><code>## Warning: package &#39;questionr&#39; was built under R version 3.4.3</code></pre>
+<pre><code>## 
+## Attaching package: &#39;questionr&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:psych&#39;:
+## 
+##     describe</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(lmtest)</code></pre></div>
+<pre><code>## Warning: package &#39;lmtest&#39; was built under R version 3.4.3</code></pre>
+<pre><code>## Loading required package: zoo</code></pre>
+<pre><code>## Warning: package &#39;zoo&#39; was built under R version 3.4.3</code></pre>
+<pre><code>## 
+## Attaching package: &#39;zoo&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     as.Date, as.Date.numeric</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(leaps)
+<span class="kw">library</span>(pander)
+<span class="kw">library</span>(ResourceSelection)</code></pre></div>
+<pre><code>## Warning: package &#39;ResourceSelection&#39; was built under R version 3.4.3</code></pre>
+<pre><code>## ResourceSelection 0.3-2   2017-02-28</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(knitr)</code></pre></div>
+<div id="political-affiliations-of-population" class="section level2">
+<h2>Political Affiliations of Population</h2>
+<p><img src="fake_news_project_files/figure-html/unnamed-chunk-3-1.png" width="1536" height="800" style="display: block; margin: auto;" /></p>
+</div>
+<div id="pew-responses" class="section level2">
+<h2>Pew Responses</h2>
+<pre><code>## 
+## Attaching package: &#39;reshape2&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:tidyr&#39;:
+## 
+##     smiths</code></pre>
+<p><img src="fake_news_project_files/figure-html/unnamed-chunk-4-1.png" width="1536" height="800" style="display: block; margin: auto;" /></p>
+</div>
+<div id="pew-questions-vs-ideology" class="section level2">
+<h2>Pew questions vs Ideology</h2>
+<p><img src="fake_news_project_files/figure-html/unnamed-chunk-5-1.png" width="1536" height="800" style="display: block; margin: auto;" /></p>
+<pre><code>## TableGrob (2 x 2) &quot;arrange&quot;: 4 grobs
+##   z     cells    name           grob
+## 1 1 (1-1,1-1) arrange gtable[layout]
+## 2 2 (1-1,2-2) arrange gtable[layout]
+## 3 3 (2-2,1-1) arrange gtable[layout]
+## 4 4 (2-2,2-2) arrange gtable[layout]</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">levels</span>(pewdata<span class="op">$</span>ideo) =<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Extreme&quot;</span>,<span class="st">&quot;Moderate&quot;</span> , <span class="st">&quot;Moderate&quot;</span>, <span class="st">&quot;Moderate&quot;</span>,<span class="st">&quot;Extreme&quot;</span>)
+pew2 &lt;-<span class="st"> </span>pewdata <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(pew1,pew2,pew3,pew4,pew5a,pew5b,pew5c,pew6,pew7,ideo,sex,age,educ2) <span class="op">%&gt;%</span><span class="st"> </span>na.omit
+
+mod1 &lt;-<span class="st"> </span><span class="kw">glm</span>(ideo<span class="op">~</span>.<span class="op">-</span>ideo,<span class="dt">data=</span>pew2,<span class="dt">family=</span><span class="st">&quot;binomial&quot;</span>)
+<span class="kw">summary</span>(mod1)</code></pre></div>
+<pre><code>## 
+## Call:
+## glm(formula = ideo ~ . - ideo, family = &quot;binomial&quot;, data = pew2)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -2.6465   0.3175   0.4355   0.5569   1.3968  
+## 
+## Coefficients:
+##                              Estimate Std. Error z value Pr(&gt;|z|)  
+## (Intercept)                  1.292990   0.867112   1.491   0.1359  
+## pew1Sometimes                0.048196   0.301476   0.160   0.8730  
+## pew1Hardly ever              0.173217   0.448562   0.386   0.6994  
+## pew1Never                   -0.255112   0.510397  -0.500   0.6172  
+## pew2Sometimes                0.104120   0.291632   0.357   0.7211  
+## pew2Hardly ever             -0.595031   0.365762  -1.627   0.1038  
+## pew2Never                    0.142176   0.498423   0.285   0.7755  
+## pew3No                       0.237207   0.321918   0.737   0.4612  
+## pew4No                      -0.397574   0.374397  -1.062   0.2883  
+## pew5aA fair amount           0.019028   0.264491   0.072   0.9426  
+## pew5aNot much                0.485134   0.410179   1.183   0.2369  
+## pew5aNone at all             0.436681   0.448035   0.975   0.3297  
+## pew5bA fair amount           0.272191   0.311718   0.873   0.3826  
+## pew5bNot much               -0.367039   0.331544  -1.107   0.2683  
+## pew5bNone at all            -0.779750   0.366501  -2.128   0.0334 *
+## pew5cA fair amount           0.226317   0.277051   0.817   0.4140  
+## pew5cNot much                0.711334   0.431322   1.649   0.0991 .
+## pew5cNone at all            -0.167619   0.381094  -0.440   0.6601  
+## pew6Somewhat                 0.546774   0.246876   2.215   0.0268 *
+## pew6Not very                 0.747650   0.488515   1.530   0.1259  
+## pew6Not at all               0.935255   0.646614   1.446   0.1481  
+## pew7Somewhat                 0.186220   0.278075   0.670   0.5031  
+## pew7Not very                 0.618408   0.587877   1.052   0.2928  
+## pew7Not at all              -0.410010   0.619065  -0.662   0.5078  
+## sexFemale                    0.168168   0.227906   0.738   0.4606  
+## age                          0.002660   0.005919   0.449   0.6531  
+## educ2High school incomplete -1.128721   0.800929  -1.409   0.1588  
+## educ2High school graduate    0.161097   0.697957   0.231   0.8175  
+## educ2Some college           -0.085576   0.722163  -0.119   0.9057  
+## educ2Associate degree        1.116957   0.816200   1.368   0.1712  
+## educ2Bachelor degree         0.159826   0.704510   0.227   0.8205  
+## educ2Some postgraduate      -0.202117   1.033290  -0.196   0.8449  
+## educ2Postgraduate            0.202046   0.719334   0.281   0.7788  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 609.13  on 808  degrees of freedom
+## Residual deviance: 564.53  on 776  degrees of freedom
+## AIC: 630.53
+## 
+## Number of Fisher Scoring iterations: 5</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">model.pred.prob &lt;-<span class="st"> </span><span class="kw">predict</span>(mod1, <span class="dt">type=</span><span class="st">&#39;response&#39;</span>)
+df =<span class="st"> </span><span class="kw">data.frame</span>(model.pred.prob)
+<span class="kw">summary</span>(df)</code></pre></div>
+<pre><code>##  model.pred.prob 
+##  Min.   :0.3770  
+##  1st Qu.:0.8384  
+##  Median :0.8956  
+##  Mean   :0.8752  
+##  3rd Qu.:0.9323  
+##  Max.   :0.9870</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">plot.mpp &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">prediction =</span> model.pred.prob, 
+                       <span class="dt">truth =</span> <span class="kw">factor</span>(mod1<span class="op">$</span>y, <span class="dt">labels=</span><span class="kw">c</span>(<span class="st">&quot;Extreme&quot;</span>, <span class="st">&quot;Moderate&quot;</span>)))
+
+<span class="kw">ggplot</span>(plot.mpp, <span class="kw">aes</span>(<span class="dt">x=</span>truth, <span class="dt">y=</span>prediction, <span class="dt">fill=</span>truth)) <span class="op">+</span><span class="st"> </span>
+<span class="st">      </span><span class="kw">geom_jitter</span>(<span class="dt">width=</span>.<span class="dv">2</span>) <span class="op">+</span><span class="st"> </span><span class="kw">geom_violin</span>(<span class="dt">alpha=</span>.<span class="dv">4</span>) <span class="op">+</span><span class="st"> </span><span class="kw">theme_bw</span>() <span class="op">+</span><span class="st"> </span><span class="kw">geom_hline</span>(<span class="dt">yintercept=</span>.<span class="dv">79</span>)</code></pre></div>
+<p><img src="fake_news_project_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pr &lt;-<span class="st"> </span><span class="kw">prediction</span>(model.pred.prob, mod1<span class="op">$</span>y)
+perf &lt;-<span class="st"> </span><span class="kw">performance</span>(pr, <span class="dt">measure=</span><span class="st">&quot;tpr&quot;</span>, <span class="dt">x.measure=</span><span class="st">&quot;fpr&quot;</span>)
+<span class="kw">plot</span>(perf, <span class="dt">colorize=</span><span class="ot">TRUE</span>, <span class="dt">lwd=</span><span class="dv">3</span>, <span class="dt">print.cutoffs.at=</span><span class="kw">c</span>(<span class="kw">seq</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="dt">by=</span><span class="fl">0.1</span>)))
+<span class="kw">abline</span>(<span class="dt">a=</span><span class="dv">0</span>, <span class="dt">b=</span><span class="dv">1</span>, <span class="dt">lty=</span><span class="dv">2</span>)</code></pre></div>
+<p><img src="fake_news_project_files/figure-html/unnamed-chunk-6-2.png" width="672" /></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">perf.f1 &lt;-<span class="st"> </span><span class="kw">performance</span>(pr,<span class="dt">measure=</span><span class="st">&quot;f&quot;</span>)
+<span class="kw">plot</span>(perf.f1)</code></pre></div>
+<p><img src="fake_news_project_files/figure-html/unnamed-chunk-6-3.png" width="672" /></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">plot.mpp<span class="op">$</span>pred.class &lt;-<span class="st"> </span><span class="kw">ifelse</span>(plot.mpp<span class="op">$</span>prediction <span class="op">&lt;</span>.<span class="dv">79</span>, <span class="dv">0</span>,<span class="dv">1</span>)
+
+plot.mpp<span class="op">$</span>pred.class &lt;-<span class="st"> </span><span class="kw">factor</span>(plot.mpp<span class="op">$</span>pred.class, <span class="dt">labels=</span><span class="kw">c</span>(<span class="st">&quot;Extreme&quot;</span>, <span class="st">&quot;Moderate&quot;</span>))
+
+
+<span class="kw">confusionMatrix</span>(plot.mpp<span class="op">$</span>pred.class, plot.mpp<span class="op">$</span>truth, <span class="dt">positive=</span><span class="st">&quot;Extreme&quot;</span>)</code></pre></div>
+<pre><code>## Confusion Matrix and Statistics
+## 
+##           Reference
+## Prediction Extreme Moderate
+##   Extreme       33       71
+##   Moderate      68      637
+##                                           
+##                Accuracy : 0.8282          
+##                  95% CI : (0.8004, 0.8536)
+##     No Information Rate : 0.8752          
+##     P-Value [Acc &gt; NIR] : 1.0000          
+##                                           
+##                   Kappa : 0.2236          
+##  Mcnemar&#39;s Test P-Value : 0.8653          
+##                                           
+##             Sensitivity : 0.32673         
+##             Specificity : 0.89972         
+##          Pos Pred Value : 0.31731         
+##          Neg Pred Value : 0.90355         
+##              Prevalence : 0.12485         
+##          Detection Rate : 0.04079         
+##    Detection Prevalence : 0.12855         
+##       Balanced Accuracy : 0.61323         
+##                                           
+##        &#39;Positive&#39; Class : Extreme         
+## </code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">levels</span>(pewdata<span class="op">$</span>party)</code></pre></div>
+<pre><code>## [1] &quot;Republican&quot;    &quot;Democrat&quot;      &quot;Independent&quot;   &quot;No preference&quot;
+## [5] &quot;Other party&quot;</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">levels</span>(pewdata<span class="op">$</span>party) =<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Republican&quot;</span>,<span class="st">&quot;Democrat&quot;</span> , <span class="ot">NA</span>, <span class="ot">NA</span>,<span class="ot">NA</span>)
+pew2 =<span class="st"> </span>pewdata <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(pew1,pew2,pew3,pew4,pew5a,pew5b,pew5c,pew6,pew7,party,sex,age,educ2) <span class="op">%&gt;%</span><span class="st"> </span>na.omit
+mod1 =<span class="st"> </span><span class="kw">glm</span>(party<span class="op">~</span>.<span class="op">-</span>party,<span class="dt">data=</span>pew2,<span class="dt">family=</span><span class="st">&quot;binomial&quot;</span>)
+
+mod1pp =<span class="st"> </span><span class="kw">predict</span>(mod1,<span class="dt">type =</span> <span class="st">&quot;response&quot;</span>)
+df =<span class="st"> </span><span class="kw">data.frame</span>(mod1pp)
+
+plot.mod1pp &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">prediction =</span> mod1pp, 
+                       <span class="dt">truth =</span> <span class="kw">factor</span>(mod1<span class="op">$</span>y, <span class="dt">labels=</span><span class="kw">c</span>(<span class="st">&quot;Republican&quot;</span>, <span class="st">&quot;Democrat&quot;</span>)))
+
+<span class="kw">ggplot</span>(plot.mod1pp, <span class="kw">aes</span>(<span class="dt">x=</span>truth, <span class="dt">y=</span>prediction, <span class="dt">fill=</span>truth)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_jitter</span>(<span class="dt">width=</span>.<span class="dv">2</span>) <span class="op">+</span><span class="st"> </span><span class="kw">geom_violin</span>(<span class="dt">alpha=</span>.<span class="dv">4</span>) <span class="op">+</span><span class="st"> </span><span class="kw">theme_bw</span>()</code></pre></div>
+<p><img src="fake_news_project_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pr &lt;-<span class="st"> </span><span class="kw">prediction</span>(mod1pp, mod1<span class="op">$</span>y)
+perf &lt;-<span class="st"> </span><span class="kw">performance</span>(pr, <span class="dt">measure=</span><span class="st">&quot;tpr&quot;</span>, <span class="dt">x.measure=</span><span class="st">&quot;fpr&quot;</span>)
+<span class="kw">plot</span>(perf, <span class="dt">colorize=</span><span class="ot">TRUE</span>, <span class="dt">lwd=</span><span class="dv">3</span>, <span class="dt">print.cutoffs.at=</span><span class="kw">c</span>(<span class="kw">seq</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="dt">by=</span><span class="fl">0.1</span>)))
+<span class="kw">abline</span>(<span class="dt">a=</span><span class="dv">0</span>, <span class="dt">b=</span><span class="dv">1</span>, <span class="dt">lty=</span><span class="dv">2</span>)</code></pre></div>
+<p><img src="fake_news_project_files/figure-html/unnamed-chunk-7-2.png" width="672" /></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">perf.f1 &lt;-<span class="st"> </span><span class="kw">performance</span>(pr,<span class="dt">measure=</span><span class="st">&quot;f&quot;</span>)
+<span class="kw">plot</span>(perf.f1)</code></pre></div>
+<p><img src="fake_news_project_files/figure-html/unnamed-chunk-7-3.png" width="672" /></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">plot.mod1pp<span class="op">$</span>pred.class &lt;-<span class="st"> </span><span class="kw">ifelse</span>(plot.mod1pp<span class="op">$</span>prediction <span class="op">&lt;</span>.<span class="dv">49</span>, <span class="dv">0</span>,<span class="dv">1</span>)
+plot.mod1pp<span class="op">$</span>pred.class &lt;-<span class="st"> </span><span class="kw">factor</span>(plot.mod1pp<span class="op">$</span>pred.class, <span class="dt">labels=</span><span class="kw">c</span>(<span class="st">&quot;Republican&quot;</span>, <span class="st">&quot;Democrat&quot;</span>))
+
+<span class="kw">confusionMatrix</span>(plot.mod1pp<span class="op">$</span>pred.class, plot.mod1pp<span class="op">$</span>truth, <span class="dt">positive=</span><span class="st">&quot;Republican&quot;</span>)</code></pre></div>
+<pre><code>## Confusion Matrix and Statistics
+## 
+##             Reference
+## Prediction   Republican Democrat
+##   Republican        101       61
+##   Democrat          117      225
+##                                           
+##                Accuracy : 0.6468          
+##                  95% CI : (0.6033, 0.6886)
+##     No Information Rate : 0.5675          
+##     P-Value [Acc &gt; NIR] : 0.0001701       
+##                                           
+##                   Kappa : 0.2579          
+##  Mcnemar&#39;s Test P-Value : 3.749e-05       
+##                                           
+##             Sensitivity : 0.4633          
+##             Specificity : 0.7867          
+##          Pos Pred Value : 0.6235          
+##          Neg Pred Value : 0.6579          
+##              Prevalence : 0.4325          
+##          Detection Rate : 0.2004          
+##    Detection Prevalence : 0.3214          
+##       Balanced Accuracy : 0.6250          
+##                                           
+##        &#39;Positive&#39; Class : Republican      
+## </code></pre>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

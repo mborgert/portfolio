@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Mitch Borgert" />
+
+
+<title>My Webscraping Adventure</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/journal.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; background-color: #f8f8f8; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+pre, code { background-color: #f8f8f8; }
+code > span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code > span.dt { color: #204a87; } /* DataType */
+code > span.dv { color: #0000cf; } /* DecVal */
+code > span.bn { color: #0000cf; } /* BaseN */
+code > span.fl { color: #0000cf; } /* Float */
+code > span.ch { color: #4e9a06; } /* Char */
+code > span.st { color: #4e9a06; } /* String */
+code > span.co { color: #8f5902; font-style: italic; } /* Comment */
+code > span.ot { color: #8f5902; } /* Other */
+code > span.al { color: #ef2929; } /* Alert */
+code > span.fu { color: #000000; } /* Function */
+code > span.er { color: #a40000; font-weight: bold; } /* Error */
+code > span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #000000; } /* Constant */
+code > span.sc { color: #000000; } /* SpecialChar */
+code > span.vs { color: #4e9a06; } /* VerbatimString */
+code > span.ss { color: #4e9a06; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #000000; } /* Variable */
+code > span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code > span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code > span.ex { } /* Extension */
+code > span.at { color: #c4a000; } /* Attribute */
+code > span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code > span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 61px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 66px;
+  margin-top: -66px;
+}
+
+.section h2 {
+  padding-top: 66px;
+  margin-top: -66px;
+}
+.section h3 {
+  padding-top: 66px;
+  margin-top: -66px;
+}
+.section h4 {
+  padding-top: 66px;
+  margin-top: -66px;
+}
+.section h5 {
+  padding-top: 66px;
+  margin-top: -66px;
+}
+.section h6 {
+  padding-top: 66px;
+  margin-top: -66px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+
+
+<div class="navbar navbar-inverse  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Portfolio</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="about_me.html">About Me</a>
+</li>
+<li>
+  <a href="contact.html">Contact</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">My Webscraping Adventure</h1>
+<h4 class="author"><em>Mitch Borgert</em></h4>
+
+</div>
+
+
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(rvest)</code></pre></div>
+<pre><code>## Loading required package: xml2</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(stringr)</code></pre></div>
+<pre><code>## Warning: package &#39;stringr&#39; was built under R version 3.4.4</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(lubridate)
+
+events =<span class="st"> </span><span class="kw">read_html</span>(<span class="st">&quot;https://www.onthisday.com/events/date/2017&quot;</span>)
+
+rank_data_html &lt;-<span class="st"> </span><span class="kw">html_nodes</span>(events,<span class="st">&#39;.mc-closeModal , .event-list__item&#39;</span>)
+
+rank_data &lt;-<span class="st"> </span><span class="kw">html_text</span>(rank_data_html)
+extdata =<span class="st"> </span><span class="kw">data.frame</span>(rank_data)
+
+df1 =<span class="st"> </span><span class="kw">data.frame</span>(<span class="kw">matrix</span>(<span class="dt">ncol =</span> <span class="dv">3</span>, <span class="dt">nrow =</span> <span class="dv">161</span>))
+
+<span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="dv">161</span>){
+  splits =<span class="st"> </span><span class="kw">str_split</span>(extdata[i,], <span class="st">&quot; &quot;</span>)
+  df1[i,<span class="dv">1</span>] =<span class="st"> </span>splits[[<span class="dv">1</span>]][<span class="dv">1</span>]
+  df1[i,<span class="dv">2</span>] =<span class="st"> </span>splits[[<span class="dv">1</span>]][<span class="dv">2</span>]
+  df1[i,<span class="dv">3</span>] =<span class="st"> </span><span class="kw">str_flatten</span>(splits[[<span class="dv">1</span>]][<span class="dv">3</span><span class="op">:</span><span class="kw">length</span>(splits[[<span class="dv">1</span>]])], <span class="st">&quot; &quot;</span>)
+}
+
+events2 =<span class="st"> </span><span class="kw">read_html</span>(<span class="st">&quot;https://www.onthisday.com/events/date/2017?p=2&quot;</span>)
+
+rank_data_html2 &lt;-<span class="st"> </span><span class="kw">html_nodes</span>(events2,<span class="st">&#39;.event-list__item&#39;</span>)
+
+rank_data2 &lt;-<span class="st"> </span><span class="kw">html_text</span>(rank_data_html2)
+extdata2 =<span class="st"> </span><span class="kw">data.frame</span>(rank_data2)
+
+df2 =<span class="st"> </span><span class="kw">data.frame</span>(<span class="kw">matrix</span>(<span class="dt">ncol =</span> <span class="dv">3</span>, <span class="dt">nrow =</span> <span class="dv">166</span>))
+
+<span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="dv">166</span>){
+  splits =<span class="st"> </span><span class="kw">str_split</span>(extdata2[i,], <span class="st">&quot; &quot;</span>)
+  df2[i,<span class="dv">1</span>] =<span class="st"> </span>splits[[<span class="dv">1</span>]][<span class="dv">1</span>]
+  df2[i,<span class="dv">2</span>] =<span class="st"> </span>splits[[<span class="dv">1</span>]][<span class="dv">2</span>]
+  df2[i,<span class="dv">3</span>] =<span class="st"> </span><span class="kw">str_flatten</span>(splits[[<span class="dv">1</span>]][<span class="dv">3</span><span class="op">:</span><span class="kw">length</span>(splits[[<span class="dv">1</span>]])], <span class="st">&quot; &quot;</span>)
+}
+
+
+events2 =<span class="st"> </span><span class="kw">read_html</span>(<span class="st">&quot;https://www.onthisday.com/events/date/2017?p=3&quot;</span>)
+
+rank_data_html2 &lt;-<span class="st"> </span><span class="kw">html_nodes</span>(events2,<span class="st">&#39;.event-list__item&#39;</span>)
+
+rank_data2 &lt;-<span class="st"> </span><span class="kw">html_text</span>(rank_data_html2)
+extdata2 =<span class="st"> </span><span class="kw">data.frame</span>(rank_data2)
+
+df3 =<span class="st"> </span><span class="kw">data.frame</span>(<span class="kw">matrix</span>(<span class="dt">ncol =</span> <span class="dv">3</span>, <span class="dt">nrow =</span> <span class="dv">172</span>))
+
+<span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="dv">172</span>){
+  splits =<span class="st"> </span><span class="kw">str_split</span>(extdata2[i,], <span class="st">&quot; &quot;</span>)
+  df3[i,<span class="dv">1</span>] =<span class="st"> </span>splits[[<span class="dv">1</span>]][<span class="dv">1</span>]
+  df3[i,<span class="dv">2</span>] =<span class="st"> </span>splits[[<span class="dv">1</span>]][<span class="dv">2</span>]
+  df3[i,<span class="dv">3</span>] =<span class="st"> </span><span class="kw">str_flatten</span>(splits[[<span class="dv">1</span>]][<span class="dv">3</span><span class="op">:</span><span class="kw">length</span>(splits[[<span class="dv">1</span>]])], <span class="st">&quot; &quot;</span>)
+}
+
+events2 =<span class="st"> </span><span class="kw">read_html</span>(<span class="st">&quot;https://www.onthisday.com/events/date/2017?p=4&quot;</span>)
+
+rank_data_html2 &lt;-<span class="st"> </span><span class="kw">html_nodes</span>(events2,<span class="st">&#39;.event-list__item&#39;</span>)
+
+rank_data2 &lt;-<span class="st"> </span><span class="kw">html_text</span>(rank_data_html2)
+extdata2 =<span class="st"> </span><span class="kw">data.frame</span>(rank_data2)
+
+df4 =<span class="st"> </span><span class="kw">data.frame</span>(<span class="kw">matrix</span>(<span class="dt">ncol =</span> <span class="dv">3</span>, <span class="dt">nrow =</span> <span class="dv">121</span>))
+
+<span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="dv">121</span>){
+  splits =<span class="st"> </span><span class="kw">str_split</span>(extdata2[i,], <span class="st">&quot; &quot;</span>)
+  df4[i,<span class="dv">1</span>] =<span class="st"> </span>splits[[<span class="dv">1</span>]][<span class="dv">1</span>]
+  df4[i,<span class="dv">2</span>] =<span class="st"> </span>splits[[<span class="dv">1</span>]][<span class="dv">2</span>]
+  df4[i,<span class="dv">3</span>] =<span class="st"> </span><span class="kw">str_flatten</span>(splits[[<span class="dv">1</span>]][<span class="dv">3</span><span class="op">:</span><span class="kw">length</span>(splits[[<span class="dv">1</span>]])], <span class="st">&quot; &quot;</span>)
+}
+
+events2 =<span class="st"> </span><span class="kw">read_html</span>(<span class="st">&quot;https://www.onthisday.com/events/date/2016?p=2&quot;</span>)
+
+rank_data_html2 &lt;-<span class="st"> </span><span class="kw">html_nodes</span>(events2,<span class="st">&#39;.event-list__item&#39;</span>)
+
+rank_data2 &lt;-<span class="st"> </span><span class="kw">html_text</span>(rank_data_html2)
+extdata2 =<span class="st"> </span><span class="kw">data.frame</span>(rank_data2)
+
+df5 =<span class="st"> </span><span class="kw">data.frame</span>(<span class="kw">matrix</span>(<span class="dt">ncol =</span> <span class="dv">3</span>, <span class="dt">nrow =</span> <span class="dv">145</span>))
+
+<span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="dv">145</span>){
+  splits =<span class="st"> </span><span class="kw">str_split</span>(extdata2[i,], <span class="st">&quot; &quot;</span>)
+  df5[i,<span class="dv">1</span>] =<span class="st"> </span>splits[[<span class="dv">1</span>]][<span class="dv">1</span>]
+  df5[i,<span class="dv">2</span>] =<span class="st"> </span>splits[[<span class="dv">1</span>]][<span class="dv">2</span>]
+  df5[i,<span class="dv">3</span>] =<span class="st"> </span><span class="kw">str_flatten</span>(splits[[<span class="dv">1</span>]][<span class="dv">3</span><span class="op">:</span><span class="kw">length</span>(splits[[<span class="dv">1</span>]])], <span class="st">&quot; &quot;</span>)
+}
+
+df5<span class="op">$</span>year =<span class="st"> </span><span class="dv">2016</span>
+
+<span class="kw">colnames</span>(df5) =<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;month&quot;</span>, <span class="st">&quot;day&quot;</span>, <span class="st">&quot;event&quot;</span>,<span class="st">&quot;year&quot;</span>)
+df5 =<span class="st"> </span>df5[<span class="kw">c</span>(<span class="st">&quot;year&quot;</span>, <span class="st">&quot;month&quot;</span>, <span class="st">&quot;day&quot;</span>,<span class="st">&quot;event&quot;</span>)]
+
+events2017 =<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">bind_rows</span>(df1,df2,df3,df4)
+
+<span class="kw">colnames</span>(events2017) =<span class="st"> </span><span class="kw">c</span>(<span class="st">&#39;month&#39;</span>,<span class="st">&#39;day&#39;</span>,<span class="st">&#39;event&#39;</span>)
+events2017<span class="op">$</span>year =<span class="st"> </span><span class="dv">2017</span>
+events2017 =<span class="st"> </span>events2017[<span class="kw">c</span>(<span class="st">&quot;year&quot;</span>, <span class="st">&quot;month&quot;</span>, <span class="st">&quot;day&quot;</span>,<span class="st">&quot;event&quot;</span>)]
+
+events =<span class="st"> </span>dplyr<span class="op">::</span><span class="kw">bind_rows</span>(df5, events2017)
+
+
+events<span class="op">$</span>date =<span class="st"> </span><span class="ot">NA</span>
+
+<span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="dv">765</span>){
+  events<span class="op">$</span>date[i] =<span class="st"> </span><span class="kw">ymd</span>(<span class="kw">str_flatten</span>(events[i,<span class="dv">1</span><span class="op">:</span><span class="dv">3</span>], <span class="st">&#39;-&#39;</span>))
+}
+
+events<span class="op">$</span>date =<span class="st"> </span><span class="kw">as.Date</span>(events[,<span class="st">&quot;date&quot;</span>], <span class="dt">origin=</span><span class="st">&quot;1970-01-01&quot;</span>)
+
+events =<span class="st"> </span>events[<span class="kw">c</span>(<span class="st">&quot;date&quot;</span>, <span class="st">&quot;event&quot;</span>)]
+
+events =<span class="st"> </span>events[<span class="op">-</span><span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">91</span>),]
+
+<span class="kw">head</span>(events)</code></pre></div>
+<pre><code>##          date
+## 92 2016-10-30
+## 93 2016-10-31
+## 94 2016-11-02
+## 95 2016-11-04
+## 96 2016-11-06
+## 97 2016-11-08
+##                                                                                                                                                    event
+## 92                                                                                    Canada and the EU sign free trade deal after opposition by Belgium
+## 93                                                                    Lebanon parliament elects Michel Aoun President after 2 1/2 years without a leader
+## 94                                             MLB World Series: Chicago Cubs defeat Cleveland Indians in game 7, 8-7, 1st Cubs series win for 108 years
+## 95                                                                                                   Paris Agreement on climate change becomes effective
+## 96                            Indian government declares levels of air pollution in Delhi an emergency situation, closing schools and construction sites
+## 97 Republican Donald Trump is elected President of the United States of America, defeating democrat Hillary Clinton, who received 2.9 million more votes</code></pre>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

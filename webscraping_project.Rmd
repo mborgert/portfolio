@@ -1,3 +1,9 @@
+---
+title: "My Webscraping Adventure"
+author: "Mitch Borgert"
+output: html_document
+---
+```{r}
 library(rvest)
 library(stringr)
 library(lubridate)
@@ -109,6 +115,6 @@ events = events[c("date", "event")]
 
 events = events[-c(1:91),]
 
-unique = unique(events$date)
+head(events)
+```
 
-write.csv(events,"events_my_precious2.csv")

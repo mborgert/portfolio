@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Mitch Borgert" />
+
+
+<title>Confirmatory Factor Analysis</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/journal.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 61px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 66px;
+  margin-top: -66px;
+}
+
+.section h2 {
+  padding-top: 66px;
+  margin-top: -66px;
+}
+.section h3 {
+  padding-top: 66px;
+  margin-top: -66px;
+}
+.section h4 {
+  padding-top: 66px;
+  margin-top: -66px;
+}
+.section h5 {
+  padding-top: 66px;
+  margin-top: -66px;
+}
+.section h6 {
+  padding-top: 66px;
+  margin-top: -66px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+
+
+<div class="navbar navbar-inverse  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Portfolio</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="about_me.html">About Me</a>
+</li>
+<li>
+  <a href="contact.html">Contact</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Confirmatory Factor Analysis</h1>
+<h4 class="author"><em>Mitch Borgert</em></h4>
+
+</div>
+
+
+<div id="data-exploration-for-factor-analysis" class="section level1">
+<h1>Data Exploration for factor analysis</h1>
+<pre><code>##      BSI01            BSI02            BSI03            BSI04       
+##  Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
+##  1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000  
+##  Median :0.0000   Median :0.0000   Median :0.0000   Median :0.0000  
+##  Mean   :0.5578   Mean   :0.3095   Mean   :0.2222   Mean   :0.6548  
+##  3rd Qu.:1.0000   3rd Qu.:0.0000   3rd Qu.:0.0000   3rd Qu.:1.0000  
+##  Max.   :4.0000   Max.   :4.0000   Max.   :4.0000   Max.   :4.0000  
+##  NA&#39;s   :1                                                          
+##      BSI05            BSI06           BSI07            BSI08       
+##  Min.   :0.0000   Min.   :0.000   Min.   :0.0000   Min.   :0.0000  
+##  1st Qu.:0.0000   1st Qu.:0.000   1st Qu.:0.0000   1st Qu.:0.0000  
+##  Median :1.0000   Median :1.000   Median :0.0000   Median :0.0000  
+##  Mean   :0.8214   Mean   :1.425   Mean   :0.4127   Mean   :0.3413  
+##  3rd Qu.:1.0000   3rd Qu.:3.000   3rd Qu.:0.0000   3rd Qu.:0.0000  
+##  Max.   :4.0000   Max.   :4.000   Max.   :4.0000   Max.   :4.0000  
+##                                                                    
+##      BSI09            BSI10          BSI11         BSI12      
+##  Min.   :0.0000   Min.   :0.00   Min.   :0.0   Min.   :0.000  
+##  1st Qu.:0.0000   1st Qu.:0.00   1st Qu.:0.0   1st Qu.:0.000  
+##  Median :0.0000   Median :1.00   Median :0.0   Median :0.000  
+##  Mean   :0.2778   Mean   :1.25   Mean   :0.5   Mean   :0.369  
+##  3rd Qu.:0.0000   3rd Qu.:2.00   3rd Qu.:1.0   3rd Qu.:0.000  
+##  Max.   :4.0000   Max.   :4.00   Max.   :4.0   Max.   :4.000  
+##                                                               
+##      BSI13           BSI14           BSI15            BSI16       
+##  Min.   :0.000   Min.   :0.000   Min.   :0.0000   Min.   :0.0000  
+##  1st Qu.:0.000   1st Qu.:0.000   1st Qu.:0.0000   1st Qu.:0.0000  
+##  Median :0.000   Median :0.000   Median :0.0000   Median :0.0000  
+##  Mean   :1.063   Mean   :0.881   Mean   :0.6587   Mean   :0.8175  
+##  3rd Qu.:2.000   3rd Qu.:1.000   3rd Qu.:1.0000   3rd Qu.:1.0000  
+##  Max.   :4.000   Max.   :4.000   Max.   :4.0000   Max.   :4.0000  
+##                                                                   
+##      BSI17           BSI18            BSI19            BSI20       
+##  Min.   :0.000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
+##  1st Qu.:0.000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000  
+##  Median :0.000   Median :0.5000   Median :0.0000   Median :0.0000  
+##  Mean   :0.761   Mean   :0.8492   Mean   :0.4365   Mean   :0.9246  
+##  3rd Qu.:1.000   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.0000  
+##  Max.   :4.000   Max.   :4.0000   Max.   :4.0000   Max.   :4.0000  
+##  NA&#39;s   :1                                                         
+##      BSI21            BSI22            BSI23            BSI24      
+##  Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.000  
+##  1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.000  
+##  Median :0.0000   Median :0.0000   Median :0.0000   Median :1.000  
+##  Mean   :0.8056   Mean   :0.4802   Mean   :0.5476   Mean   :1.052  
+##  3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.000  
+##  Max.   :4.0000   Max.   :4.0000   Max.   :4.0000   Max.   :4.000  
+##                                                                    
+##      BSI25            BSI26           BSI27            BSI28       
+##  Min.   :0.0000   Min.   :0.000   Min.   :0.0000   Min.   :0.0000  
+##  1st Qu.:0.0000   1st Qu.:0.000   1st Qu.:0.0000   1st Qu.:0.0000  
+##  Median :0.0000   Median :0.000   Median :1.0000   Median :0.0000  
+##  Mean   :0.7857   Mean   :0.877   Mean   :0.9683   Mean   :0.4484  
+##  3rd Qu.:1.0000   3rd Qu.:1.000   3rd Qu.:1.0000   3rd Qu.:0.0000  
+##  Max.   :4.0000   Max.   :4.000   Max.   :4.0000   Max.   :4.0000  
+##                                                                    
+##      BSI29            BSI30            BSI31            BSI32       
+##  Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
+##  1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000  
+##  Median :0.0000   Median :0.0000   Median :0.0000   Median :0.0000  
+##  Mean   :0.3929   Mean   :0.2937   Mean   :0.3889   Mean   :0.4064  
+##  3rd Qu.:0.0000   3rd Qu.:0.0000   3rd Qu.:0.0000   3rd Qu.:0.0000  
+##  Max.   :4.0000   Max.   :4.0000   Max.   :4.0000   Max.   :4.0000  
+##                                                     NA&#39;s   :1       
+##      BSI33            BSI34            BSI35          BSI36      
+##  Min.   :0.0000   Min.   :0.0000   Min.   :0.00   Min.   :0.000  
+##  1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.00   1st Qu.:0.000  
+##  Median :0.0000   Median :0.0000   Median :0.00   Median :1.000  
+##  Mean   :0.3307   Mean   :0.5737   Mean   :0.68   Mean   :1.064  
+##  3rd Qu.:0.0000   3rd Qu.:1.0000   3rd Qu.:1.00   3rd Qu.:2.000  
+##  Max.   :4.0000   Max.   :4.0000   Max.   :4.00   Max.   :4.000  
+##  NA&#39;s   :1        NA&#39;s   :1        NA&#39;s   :2      NA&#39;s   :1      
+##      BSI37           BSI38            BSI39            BSI40       
+##  Min.   :0.000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
+##  1st Qu.:0.000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000  
+##  Median :0.000   Median :0.0000   Median :0.0000   Median :0.0000  
+##  Mean   :0.631   Mean   :0.6032   Mean   :0.5317   Mean   :0.5714  
+##  3rd Qu.:1.000   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.0000  
+##  Max.   :4.000   Max.   :4.0000   Max.   :4.0000   Max.   :4.0000  
+##                                                                    
+##      BSI41            BSI42            BSI43            BSI44       
+##  Min.   :0.0000   Min.   :0.0000   Min.   :0.0000   Min.   :0.0000  
+##  1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000   1st Qu.:0.0000  
+##  Median :0.0000   Median :0.0000   Median :0.0000   Median :0.0000  
+##  Mean   :0.6825   Mean   :0.6667   Mean   :0.5317   Mean   :0.5976  
+##  3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.0000   3rd Qu.:1.0000  
+##  Max.   :4.0000   Max.   :4.0000   Max.   :4.0000   Max.   :4.0000  
+##                                                     NA&#39;s   :1       
+##      BSI45            BSI46           BSI47         BSI48       
+##  Min.   :0.0000   Min.   :0.000   Min.   :0.0   Min.   :0.0000  
+##  1st Qu.:0.0000   1st Qu.:0.000   1st Qu.:0.0   1st Qu.:0.0000  
+##  Median :0.0000   Median :1.000   Median :0.0   Median :0.0000  
+##  Mean   :0.2778   Mean   :1.095   Mean   :0.5   Mean   :0.8135  
+##  3rd Qu.:0.0000   3rd Qu.:2.000   3rd Qu.:1.0   3rd Qu.:1.0000  
+##  Max.   :4.0000   Max.   :4.000   Max.   :4.0   Max.   :4.0000  
+##                                                                 
+##      BSI49           BSI50            BSI51           BSI52       
+##  Min.   :0.000   Min.   :0.0000   Min.   :0.000   Min.   :0.0000  
+##  1st Qu.:0.000   1st Qu.:0.0000   1st Qu.:0.000   1st Qu.:0.0000  
+##  Median :0.000   Median :0.0000   Median :1.000   Median :0.0000  
+##  Mean   :0.869   Mean   :0.4722   Mean   :1.119   Mean   :0.6905  
+##  3rd Qu.:1.000   3rd Qu.:1.0000   3rd Qu.:2.000   3rd Qu.:1.0000  
+##  Max.   :4.000   Max.   :4.0000   Max.   :4.000   Max.   :4.0000  
+##                                                                   
+##      BSI53       
+##  Min.   :0.0000  
+##  1st Qu.:0.0000  
+##  Median :0.0000  
+##  Mean   :0.4444  
+##  3rd Qu.:1.0000  
+##  Max.   :4.0000  
+## </code></pre>
+<p><img src="conf_fact_project_files/figure-html/unnamed-chunk-2-1.png" width="672" /><img src="conf_fact_project_files/figure-html/unnamed-chunk-2-2.png" width="672" /></p>
+<p>We can see that all the data ranges from 0 to 4. There are no outlines or detectable wrongly entered data. There are a few na’s in the data. The corrplot has some very small groupings of variables when it is forced to do 9. This may leave us with some lackluster factors that do no fit what is predicted. The scree plot tells us that we could take 2 factors if we followed the elbow rule or about 12 factors if we choose to go for an eigenvalue less than 1. We will still try 9 since that is what is predicted.</p>
+</div>
+<div id="factors-and-their-loadings" class="section level1">
+<h1>Factors and their loadings</h1>
+<pre><code>## 
+## Loadings:
+##       RC3    RC5    RC2    RC8    RC1    RC4    RC7    RC6    RC9   
+## BSI01  0.451                                                        
+## BSI02  0.550                                                        
+## BSI03                                                               
+## BSI04                       0.479                                   
+## BSI05                       0.450                                   
+## BSI06                0.614                                          
+## BSI07  0.643                                                        
+## BSI08                                            0.667              
+## BSI09                       0.656                                   
+## BSI10                0.490                                          
+## BSI11                                                          0.624
+## BSI12                       0.547                                   
+## BSI13                0.679                                          
+## BSI14         0.729                                                 
+## BSI15         0.470         0.493                                   
+## BSI16         0.797                                                 
+## BSI17         0.797                                                 
+## BSI18                                                               
+## BSI19         0.448                                                 
+## BSI20                                                               
+## BSI21                                     0.635                     
+## BSI22                       0.565                                   
+## BSI23  0.560                              0.537                     
+## BSI24                                     0.685                     
+## BSI25  0.406                                                        
+## BSI26                                                               
+## BSI27                              0.480                            
+## BSI28                                                   0.698       
+## BSI29  0.685                                                        
+## BSI30  0.586                                                        
+## BSI31                                                   0.555       
+## BSI32         0.460                                                 
+## BSI33                                     0.429                     
+## BSI34                                                   0.475       
+## BSI35                                                               
+## BSI36                                                               
+## BSI37  0.544                                                        
+## BSI38  0.490                                                        
+## BSI39                                                               
+## BSI40                0.572                                          
+## BSI41                0.522                                          
+## BSI42                              0.658                            
+## BSI43                              0.436                            
+## BSI44                                            0.654              
+## BSI45                                            0.567              
+## BSI46                0.604                                          
+## BSI47                                                               
+## BSI48                                                               
+## BSI49                              0.528                            
+## BSI50                                                               
+## BSI51                                     0.500                     
+## BSI52                                                               
+## BSI53                                                               
+## 
+##                  RC3   RC5   RC2   RC8   RC1   RC4   RC7   RC6   RC9
+## SS loadings    4.809 4.653 4.251 3.669 3.628 3.200 3.066 2.276 1.507
+## Proportion Var 0.091 0.088 0.080 0.069 0.068 0.060 0.058 0.043 0.028
+## Cumulative Var 0.091 0.179 0.259 0.328 0.396 0.457 0.515 0.558 0.586</code></pre>
+<p>Factor 1 (RC1): BSI03,04,05,09,12,15,22,50,53. BSI Obsessive compulsive subscale<br />
+Factor 2 (RC4): BSI07,25,35,37,38,46,47,48,49,52,53. BSI Anxiety subscale<br />
+Factor 3 (RC9): BSI20,21,24,41,42,43,51. BSI Interpersonal sensitivity subscale<br />
+Factor 4 (RC5): BSI14,15,16,17,32. BSI Depression subscale<br />
+Factor 5 (RC2): BSI04,06,10,13,40,41,46. BSI Hostility subscale<br />
+Factor 6 (RC3): BSI01,02,07,23,29,30. Somatization subscale<br />
+Factor 7 (RC7): BSI08,44,45. BSI Psychoticism subscale<br />
+Factor 8 (RC6): BSI10,11,25,28 BSI Phobic anxiety subscale<br />
+Factor 9 (RC8): BSI33,34. BSI Paranoid ideation subscale</p>
+<p>All of the factors match with at least one variable in the actual subscales except factor 9 which I am calling BSI Paranoid ideation even though it shares no factors. Factors 7 and 9 both share have a variable in Psychoticism but I chose Factor 7 simply because it came first.</p>
+</div>
+<div id="creation-of-parental-overprotection-subscale" class="section level1">
+<h1>Creation of parental overprotection subscale</h1>
+<p>Now I’ve created the parental overprotection subscale manually and here are the summary stats.</p>
+<table style="width:81%;">
+<colgroup>
+<col width="9%" />
+<col width="13%" />
+<col width="12%" />
+<col width="11%" />
+<col width="13%" />
+<col width="9%" />
+<col width="9%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">Min.</th>
+<th align="center">1st Qu.</th>
+<th align="center">Median</th>
+<th align="center">Mean</th>
+<th align="center">3rd Qu.</th>
+<th align="center">Max.</th>
+<th align="center">NA’s</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">1</td>
+<td align="center">1.769</td>
+<td align="center">2.154</td>
+<td align="center">2.117</td>
+<td align="center">2.385</td>
+<td align="center">4</td>
+<td align="center">2</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="data-exploration-for-model-building" class="section level1">
+<h1>Data exploration for model building</h1>
+<p><img src="conf_fact_project_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p>From some bivariate graphs of demographic variables vs overprotection we can see that there may be a relationship between age and overprotection. Females may have a higher overprotection than males. Living situation may be something that effects overprotection. Both having siblings and religiousness do not seem very significant.</p>
+<p><img src="conf_fact_project_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p>For the neighborhood variables it looks like drug addicts in the neighborhood and youth gang fights may effect overprotection. Violence and drug dealing to not seem significant.</p>
+</div>
+<div id="model-building" class="section level1">
+<h1>Model building</h1>
+<div id="for-this-first-model-i-will-just-use-the-bsi-variables-that-maximize-r2-and-some-demographic-variables." class="section level2">
+<h2>For this first model I will just use the BSI variables that maximize R^2 and some demographic variables.</h2>
+<p><img src="conf_fact_project_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<pre><code>##                   (Intercept)                 BSI_obsessive 
+##                          TRUE                         FALSE 
+##                   BSI_anxiety BSI_interpersonal_sensitivity 
+##                         FALSE                         FALSE 
+##                BSI_depression                 BSI_hostility 
+##                          TRUE                          TRUE 
+##              BSI_somatization              BSI_psychoticism 
+##                          TRUE                         FALSE 
+##            BSI_phobic_anxiety         BSI_paranoid_ideation 
+##                         FALSE                         FALSE</code></pre>
+<table>
+<caption>Table continues below</caption>
+<colgroup>
+<col width="50%" />
+<col width="18%" />
+<col width="18%" />
+<col width="13%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center"> </th>
+<th align="center">Estimate</th>
+<th align="center">Std. Error</th>
+<th align="center">t value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center"><strong>(Intercept)</strong></td>
+<td align="center">2.791</td>
+<td align="center">0.2522</td>
+<td align="center">11.07</td>
+</tr>
+<tr class="even">
+<td align="center"><strong>AGE</strong></td>
+<td align="center">-0.04386</td>
+<td align="center">0.01659</td>
+<td align="center">-2.644</td>
+</tr>
+<tr class="odd">
+<td align="center"><strong>LIVWITHone parent</strong></td>
+<td align="center">0.1405</td>
+<td align="center">0.08397</td>
+<td align="center">1.673</td>
+</tr>
+<tr class="even">
+<td align="center"><strong>LIVWITHother</strong></td>
+<td align="center">-0.1642</td>
+<td align="center">0.133</td>
+<td align="center">-1.234</td>
+</tr>
+<tr class="odd">
+<td align="center"><strong>GENDERMale</strong></td>
+<td align="center">-0.2211</td>
+<td align="center">0.06443</td>
+<td align="center">-3.432</td>
+</tr>
+<tr class="even">
+<td align="center"><strong>BSI_interpersonal_sensitivity</strong></td>
+<td align="center">0.01263</td>
+<td align="center">0.03198</td>
+<td align="center">0.3949</td>
+</tr>
+<tr class="odd">
+<td align="center"><strong>BSI_hostility</strong></td>
+<td align="center">0.05103</td>
+<td align="center">0.03279</td>
+<td align="center">1.556</td>
+</tr>
+<tr class="even">
+<td align="center"><strong>BSI_paranoid_ideation</strong></td>
+<td align="center">-0.0009373</td>
+<td align="center">0.03187</td>
+<td align="center">-0.02941</td>
+</tr>
+</tbody>
+</table>
+<table style="width:65%;">
+<colgroup>
+<col width="50%" />
+<col width="15%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center"> </th>
+<th align="center">Pr(&gt;|t|)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center"><strong>(Intercept)</strong></td>
+<td align="center">2.981e-23</td>
+</tr>
+<tr class="even">
+<td align="center"><strong>AGE</strong></td>
+<td align="center">0.00874</td>
+</tr>
+<tr class="odd">
+<td align="center"><strong>LIVWITHone parent</strong></td>
+<td align="center">0.09567</td>
+</tr>
+<tr class="even">
+<td align="center"><strong>LIVWITHother</strong></td>
+<td align="center">0.2185</td>
+</tr>
+<tr class="odd">
+<td align="center"><strong>GENDERMale</strong></td>
+<td align="center">0.0007065</td>
+</tr>
+<tr class="even">
+<td align="center"><strong>BSI_interpersonal_sensitivity</strong></td>
+<td align="center">0.6933</td>
+</tr>
+<tr class="odd">
+<td align="center"><strong>BSI_hostility</strong></td>
+<td align="center">0.1209</td>
+</tr>
+<tr class="even">
+<td align="center"><strong>BSI_paranoid_ideation</strong></td>
+<td align="center">0.9766</td>
+</tr>
+</tbody>
+</table>
+<table style="width:86%;">
+<caption>Fitting linear model: overprotection ~ AGE + LIVWITH + GENDER + BSI_interpersonal_sensitivity + BSI_hostility + BSI_paranoid_ideation</caption>
+<colgroup>
+<col width="20%" />
+<col width="30%" />
+<col width="12%" />
+<col width="22%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">Observations</th>
+<th align="center">Residual Std. Error</th>
+<th align="center"><span class="math inline">\(R^2\)</span></th>
+<th align="center">Adjusted <span class="math inline">\(R^2\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">247</td>
+<td align="center">0.4927</td>
+<td align="center">0.1371</td>
+<td align="center">0.1119</td>
+</tr>
+</tbody>
+</table>
+<pre><code>## [1] 361.1086</code></pre>
+</div>
+<div id="for-the-second-model-i-will-try-forward-selection-starting-with-age-and-then-add-neighborhood-and-bsi-variables." class="section level2">
+<h2>For the second model I will try forward selection starting with age and then add neighborhood and bsi variables.</h2>
+<table style="width:94%;">
+<colgroup>
+<col width="31%" />
+<col width="15%" />
+<col width="18%" />
+<col width="13%" />
+<col width="15%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center"> </th>
+<th align="center">Estimate</th>
+<th align="center">Std. Error</th>
+<th align="center">t value</th>
+<th align="center">Pr(&gt;|t|)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center"><strong>(Intercept)</strong></td>
+<td align="center">2.798</td>
+<td align="center">0.2464</td>
+<td align="center">11.36</td>
+<td align="center">3.768e-24</td>
+</tr>
+<tr class="even">
+<td align="center"><strong>AGE</strong></td>
+<td align="center">-0.05254</td>
+<td align="center">0.01669</td>
+<td align="center">-3.148</td>
+<td align="center">0.001855</td>
+</tr>
+<tr class="odd">
+<td align="center"><strong>BSI_hostility</strong></td>
+<td align="center">0.06349</td>
+<td align="center">0.03333</td>
+<td align="center">1.905</td>
+<td align="center">0.05796</td>
+</tr>
+<tr class="even">
+<td align="center"><strong>BSI_somatization</strong></td>
+<td align="center">0.04944</td>
+<td align="center">0.03413</td>
+<td align="center">1.448</td>
+<td align="center">0.1488</td>
+</tr>
+<tr class="odd">
+<td align="center"><strong>NGHB2somewhat</strong></td>
+<td align="center">0.205</td>
+<td align="center">0.1258</td>
+<td align="center">1.629</td>
+<td align="center">0.1046</td>
+</tr>
+<tr class="even">
+<td align="center"><strong>NGHB2quite</strong></td>
+<td align="center">0.3332</td>
+<td align="center">0.1481</td>
+<td align="center">2.249</td>
+<td align="center">0.02542</td>
+</tr>
+<tr class="odd">
+<td align="center"><strong>NGHB2very</strong></td>
+<td align="center">0.4447</td>
+<td align="center">0.1354</td>
+<td align="center">3.283</td>
+<td align="center">0.001182</td>
+</tr>
+<tr class="even">
+<td align="center"><strong>NGHB8somewhat</strong></td>
+<td align="center">-0.06436</td>
+<td align="center">0.1245</td>
+<td align="center">-0.5168</td>
+<td align="center">0.6058</td>
+</tr>
+<tr class="odd">
+<td align="center"><strong>NGHB8quite</strong></td>
+<td align="center">-0.2795</td>
+<td align="center">0.1486</td>
+<td align="center">-1.881</td>
+<td align="center">0.06117</td>
+</tr>
+<tr class="even">
+<td align="center"><strong>NGHB8very</strong></td>
+<td align="center">-0.2952</td>
+<td align="center">0.1335</td>
+<td align="center">-2.211</td>
+<td align="center">0.02797</td>
+</tr>
+</tbody>
+</table>
+<table style="width:85%;">
+<caption>Fitting linear model: overprotection ~ AGE + BSI_hostility + BSI_somatization + NGHB2 + NGHB8</caption>
+<colgroup>
+<col width="20%" />
+<col width="30%" />
+<col width="11%" />
+<col width="22%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">Observations</th>
+<th align="center">Residual Std. Error</th>
+<th align="center"><span class="math inline">\(R^2\)</span></th>
+<th align="center">Adjusted <span class="math inline">\(R^2\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">247</td>
+<td align="center">0.5027</td>
+<td align="center">0.109</td>
+<td align="center">0.07519</td>
+</tr>
+</tbody>
+</table>
+<pre><code>## [1] 373.0254</code></pre>
+<p>Model 1 has a adjusted R^2 of .111 and a AIC of 361.1. Model 2 has an adjusted R^2 of .075 and an AIC of 373.02. Model 1 is a better model. For the final model we will add the effective variables in model 2 to model 1.</p>
+<table>
+<colgroup>
+<col width="38%" />
+<col width="15%" />
+<col width="17%" />
+<col width="13%" />
+<col width="15%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center"> </th>
+<th align="center">Estimate</th>
+<th align="center">Std. Error</th>
+<th align="center">t value</th>
+<th align="center">Pr(&gt;|t|)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center"><strong>(Intercept)</strong></td>
+<td align="center">2.627</td>
+<td align="center">0.2582</td>
+<td align="center">10.17</td>
+<td align="center">2.343e-20</td>
+</tr>
+<tr class="even">
+<td align="center"><strong>AGE</strong></td>
+<td align="center">-0.04157</td>
+<td align="center">0.01713</td>
+<td align="center">-2.427</td>
+<td align="center">0.01599</td>
+</tr>
+<tr class="odd">
+<td align="center"><strong>LIVWITHone parent</strong></td>
+<td align="center">0.1448</td>
+<td align="center">0.08313</td>
+<td align="center">1.742</td>
+<td align="center">0.08274</td>
+</tr>
+<tr class="even">
+<td align="center"><strong>LIVWITHother</strong></td>
+<td align="center">-0.196</td>
+<td align="center">0.1339</td>
+<td align="center">-1.464</td>
+<td align="center">0.1446</td>
+</tr>
+<tr class="odd">
+<td align="center"><strong>GENDERMale</strong></td>
+<td align="center">-0.1869</td>
+<td align="center">0.06516</td>
+<td align="center">-2.869</td>
+<td align="center">0.004498</td>
+</tr>
+<tr class="even">
+<td align="center"><strong>BSI_hostility</strong></td>
+<td align="center">0.05259</td>
+<td align="center">0.03255</td>
+<td align="center">1.616</td>
+<td align="center">0.1075</td>
+</tr>
+<tr class="odd">
+<td align="center"><strong>BSI_paranoid_ideation</strong></td>
+<td align="center">-0.01988</td>
+<td align="center">0.0322</td>
+<td align="center">-0.6174</td>
+<td align="center">0.5376</td>
+</tr>
+<tr class="even">
+<td align="center"><strong>BSI_somatization</strong></td>
+<td align="center">0.03246</td>
+<td align="center">0.03353</td>
+<td align="center">0.9682</td>
+<td align="center">0.334</td>
+</tr>
+<tr class="odd">
+<td align="center"><strong>NGHB2somewhat</strong></td>
+<td align="center">0.1937</td>
+<td align="center">0.1224</td>
+<td align="center">1.583</td>
+<td align="center">0.1147</td>
+</tr>
+<tr class="even">
+<td align="center"><strong>NGHB2quite</strong></td>
+<td align="center">0.2918</td>
+<td align="center">0.147</td>
+<td align="center">1.986</td>
+<td align="center">0.04824</td>
+</tr>
+<tr class="odd">
+<td align="center"><strong>NGHB2very</strong></td>
+<td align="center">0.3978</td>
+<td align="center">0.1351</td>
+<td align="center">2.944</td>
+<td align="center">0.003573</td>
+</tr>
+<tr class="even">
+<td align="center"><strong>NGHB8somewhat</strong></td>
+<td align="center">0.0157</td>
+<td align="center">0.1225</td>
+<td align="center">0.1282</td>
+<td align="center">0.8981</td>
+</tr>
+<tr class="odd">
+<td align="center"><strong>NGHB8quite</strong></td>
+<td align="center">-0.2149</td>
+<td align="center">0.1451</td>
+<td align="center">-1.481</td>
+<td align="center">0.1399</td>
+</tr>
+<tr class="even">
+<td align="center"><strong>NGHB8very</strong></td>
+<td align="center">-0.2409</td>
+<td align="center">0.1318</td>
+<td align="center">-1.828</td>
+<td align="center">0.0689</td>
+</tr>
+</tbody>
+</table>
+<table style="width:85%;">
+<caption>Fitting linear model: overprotection ~ AGE + LIVWITH + GENDER + BSI_hostility + BSI_paranoid_ideation + BSI_somatization + NGHB2 + NGHB8</caption>
+<colgroup>
+<col width="20%" />
+<col width="30%" />
+<col width="11%" />
+<col width="22%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">Observations</th>
+<th align="center">Residual Std. Error</th>
+<th align="center"><span class="math inline">\(R^2\)</span></th>
+<th align="center">Adjusted <span class="math inline">\(R^2\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">247</td>
+<td align="center">0.4864</td>
+<td align="center">0.18</td>
+<td align="center">0.1343</td>
+</tr>
+</tbody>
+</table>
+<pre><code>## [1] 360.5092</code></pre>
+<p><img src="conf_fact_project_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<p>This model has an adjusted R^2 of .134 and an AIC of 360.509, making it the best model. The residuals of this model are mostly normal. For our coefficients we have -.04(age) which is a -.04 decrease in overprotection as age decreases. There is .144 increasing for living with one parent when compared to two parents and -.19 for other. There is -.1869 decrease in overprotection for males when compared to females. For BSI-hostility there is a .05 increase for each increase in the score. There is a -.01 decrease and a .032 increase for BSI_paranoid_ideation and BSI somatization respectively. For NGHB2, drug addicts in a neighborhood, we have .19 increase if it is somewhat a problem, .291 if it is quite a problem, and .397 if it is very much a problem. Finally for NGHB8, drug dealing, we have a .015 increase if it is somewhat a problem, -.214 decrease if it is quite a problem, and -.24 decrease if it is very much a problem.</p>
+</div>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

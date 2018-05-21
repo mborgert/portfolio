@@ -14,6 +14,131 @@
 
 <thead>
 <tr class="header">
+<th align="center" >Midterm Election Predictions</th>
+<th align="center" >Description</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+  <td><a href=midterm_project.html><img src="images/wave.png" alt="" border=3></img> </td>  
+  <td> [Here](midterm_project.html) is the project.  </td>
+</td>
+</tr>
+
+</tbody>
+</table>
+
+---
+
+<table  border="5" bordercolor="black" align="center">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+
+<thead>
+<tr class="header">
+<th align="center" >Webscraping Project</th>
+<th align="center" >Description</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+  <td><a href=webscraping_project.html><img src="images/trowel.jpg" alt="" border=3></img> </td>  
+  <td> [Here](webscraping_project.html) is the project.  </td>
+</td>
+</tr>
+
+</tbody>
+</table>
+
+---
+
+<table  border="5" bordercolor="black" align="center">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+
+<thead>
+<tr class="header">
+<th align="center" >DataFest Website</th>
+<th align="center" >Description</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+  <td><a href=https://mborgert.github.io/datafest/><img src="images/datafest.png" alt="" border=3></img> </td>  
+  <td> [Here](https://mborgert.github.io/datafest/) is the project.  </td>
+</td>
+</tr>
+
+</tbody>
+</table>
+
+---
+
+<table  border="5" bordercolor="black" align="center">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+
+<thead>
+<tr class="header">
+<th align="center" >Fake News Project</th>
+<th align="center" >Description</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+  <td><a href=fake_news_project.html><img src="images/fakenews.jpg" alt="" border=3></img> </td>  
+  <td> [Here](fake_news_project.html) is the project.  </td>
+</td>
+</tr>
+
+</tbody>
+</table>
+
+---
+
+<table  border="5" bordercolor="black" align="center">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+
+<thead>
+<tr class="header">
+<th align="center" >Factor Analysis</th>
+<th align="center" >Description</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+  <td><a href=conf_fact_project.html><img src="images/factor.png" alt="" border=3></img> </td>  
+  <td> [Here](conf_fact_project.html) is the project.  </td>
+</td>
+</tr>
+
+</tbody>
+</table>
+
+---
+
+<table  border="5" bordercolor="black" align="center">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+
+<thead>
+<tr class="header">
 <th align="center" >Sentiment Analysis</th>
 <th align="center" >Description</th>
 </tr>
