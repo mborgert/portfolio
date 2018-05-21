@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Team Clueless" />
+
+
+<title>KIR Analysis</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/journal.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; background-color: #f8f8f8; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+pre, code { background-color: #f8f8f8; }
+code > span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code > span.dt { color: #204a87; } /* DataType */
+code > span.dv { color: #0000cf; } /* DecVal */
+code > span.bn { color: #0000cf; } /* BaseN */
+code > span.fl { color: #0000cf; } /* Float */
+code > span.ch { color: #4e9a06; } /* Char */
+code > span.st { color: #4e9a06; } /* String */
+code > span.co { color: #8f5902; font-style: italic; } /* Comment */
+code > span.ot { color: #8f5902; } /* Other */
+code > span.al { color: #ef2929; } /* Alert */
+code > span.fu { color: #000000; } /* Function */
+code > span.er { color: #a40000; font-weight: bold; } /* Error */
+code > span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #000000; } /* Constant */
+code > span.sc { color: #000000; } /* SpecialChar */
+code > span.vs { color: #4e9a06; } /* VerbatimString */
+code > span.ss { color: #4e9a06; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #000000; } /* Variable */
+code > span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code > span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code > span.ex { } /* Extension */
+code > span.at { color: #c4a000; } /* Attribute */
+code > span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code > span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 61px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 66px;
+  margin-top: -66px;
+}
+
+.section h2 {
+  padding-top: 66px;
+  margin-top: -66px;
+}
+.section h3 {
+  padding-top: 66px;
+  margin-top: -66px;
+}
+.section h4 {
+  padding-top: 66px;
+  margin-top: -66px;
+}
+.section h5 {
+  padding-top: 66px;
+  margin-top: -66px;
+}
+.section h6 {
+  padding-top: 66px;
+  margin-top: -66px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+
+
+<div class="navbar navbar-inverse  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Portfolio</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="about_me.html">About Me</a>
+</li>
+<li>
+  <a href="contact.html">Contact</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">KIR Analysis</h1>
+<h4 class="author"><em>Team Clueless</em></h4>
+
+</div>
+
+
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">langa =<span class="st"> </span><span class="kw">as.factor</span>(projectdata<span class="op">$</span>LANGA)
+<span class="kw">levels</span>(langa) =<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;No&quot;</span>, <span class="st">&quot;Yes&quot;</span>)
+hl =<span class="st"> </span><span class="kw">as.factor</span>(projectdata<span class="op">$</span>HL)
+<span class="kw">levels</span>(hl) =<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;No&quot;</span>, <span class="st">&#39;Yes&#39;</span>)
+friends=projectdata<span class="op">$</span>friends_sexexp
+con2 =<span class="st"> </span><span class="kw">as.factor</span>(projectdata<span class="op">$</span>CON2)
+<span class="kw">levels</span>(con2) =<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Agree&quot;</span>, <span class="st">&#39;Neither Agree or Disagree&#39;</span>, <span class="st">&quot;Disagree&quot;</span>)
+inter =<span class="st"> </span><span class="kw">as.factor</span>(projectdata<span class="op">$</span>intervention)
+<span class="kw">levels</span>(inter) =<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;No KIR&quot;</span>, <span class="st">&quot;KIR&quot;</span>)</code></pre></div>
+<p>bivariate 1</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">df4 =<span class="st"> </span><span class="kw">na.omit</span>(<span class="kw">data.frame</span>(hl,friends))
+<span class="kw">ggplot</span>(df4,<span class="kw">aes</span>(<span class="dt">x =</span> friends, <span class="dt">col=</span> hl)) <span class="op">+</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">geom_density</span>() <span class="op">+</span><span class="st"> </span><span class="kw">ggtitle</span>(<span class="st">&quot;Perceptions of Freinds Having Sex by Hispanic/Latino:&quot;</span>) </code></pre></div>
+<p><img src="kir_project_files/figure-html/unnamed-chunk-3-1.png" width="672" /> analysis: difference in mean</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">t.test</span>(friends<span class="op">~</span>hl, <span class="dt">data=</span>df4)</code></pre></div>
+<pre><code>## 
+##  Welch Two Sample t-test
+## 
+## data:  friends by hl
+## t = 9.2475, df = 938.91, p-value &lt; 2.2e-16
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  0.2518259 0.3875028
+## sample estimates:
+##  mean in group No mean in group Yes 
+##          1.886237          1.566572</code></pre>
+<p>There is strong evidence that Hispanic/Latino and non-Hispanic/Latino students have different perceptions about their friends having sex (p = 2.2e-16).</p>
+<p>bivariate 2</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">df5=<span class="st"> </span><span class="kw">na.omit</span>(<span class="kw">data.frame</span>(hl,langa))
+<span class="kw">ggplot</span>(df5, <span class="kw">aes</span>(<span class="dt">x =</span> langa, <span class="dt">fill =</span> hl )) <span class="op">+</span><span class="st"> </span><span class="kw">geom_bar</span>(<span class="dt">position =</span> <span class="st">&quot;dodge&quot;</span>)  <span class="op">+</span><span class="st"> </span><span class="kw">ggtitle</span>(<span class="st">&quot;Speak English at Home&quot;</span>)</code></pre></div>
+<p><img src="kir_project_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">addmargins</span>(<span class="kw">table</span>(hl,langa))</code></pre></div>
+<pre><code>##      langa
+## hl      No  Yes  Sum
+##   No    64  714  778
+##   Yes 1063 4462 5525
+##   Sum 1127 5176 6303</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">round</span>(<span class="kw">prop.table</span>(<span class="kw">table</span>(hl,langa),<span class="dt">margin =</span> <span class="dv">1</span>),<span class="dv">3</span>)</code></pre></div>
+<pre><code>##      langa
+## hl       No   Yes
+##   No  0.082 0.918
+##   Yes 0.192 0.808</code></pre>
+<p>analisys: difference in proportion?</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">prop.test</span>(<span class="dt">x=</span><span class="kw">c</span>(<span class="dv">714</span>, <span class="dv">4462</span>), <span class="dt">n=</span><span class="kw">c</span>(<span class="dv">778</span>, <span class="dv">5525</span>))</code></pre></div>
+<pre><code>## 
+##  2-sample test for equality of proportions with continuity
+##  correction
+## 
+## data:  c(714, 4462) out of c(778, 5525)
+## X-squared = 55.59, df = 1, p-value = 8.927e-14
+## alternative hypothesis: two.sided
+## 95 percent confidence interval:
+##  0.08747566 0.13279630
+## sample estimates:
+##    prop 1    prop 2 
+## 0.9177378 0.8076018</code></pre>
+<p>There is strong evidence that the proportion of students that do speak English at home is not the same for Hispanic/Latino and non-Hispanic/Latino students(p = 8.927e-14).</p>
+<p>bivariate 3</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ggplot</span>(projectdata,<span class="kw">aes</span>(<span class="dt">x =</span> friends, <span class="dt">col=</span> inter)) <span class="op">+</span><span class="st"> </span>
+<span class="st">  </span><span class="kw">geom_density</span>() <span class="op">+</span><span class="st"> </span><span class="kw">ggtitle</span>(<span class="st">&quot;Effects of KIR:&quot;</span>) </code></pre></div>
+<pre><code>## Warning: Removed 68 rows containing non-finite values (stat_density).</code></pre>
+<p><img src="kir_project_files/figure-html/unnamed-chunk-7-1.png" width="672" /> analysis: difference in mean</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">df2 =<span class="st"> </span><span class="kw">na.omit</span>(<span class="kw">data.frame</span>(inter,friends))
+<span class="kw">t.test</span>(friends<span class="op">~</span>inter, <span class="dt">data=</span>df2)</code></pre></div>
+<pre><code>## 
+##  Welch Two Sample t-test
+## 
+## data:  friends by inter
+## t = 7.0008, df = 6328.4, p-value = 2.807e-12
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  0.1017150 0.1808326
+## sample estimates:
+## mean in group No KIR    mean in group KIR 
+##             1.674346             1.533073</code></pre>
+<p>There is strong evidence that KIR did effect students perceptions of their friends having sex (p = 2.807e-12).</p>
+<p>Multivariable model: We are looking to see if KIR had a different level of effect in students that are Hispanic or Latino.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">model =<span class="st"> </span><span class="kw">aov</span>(friends<span class="op">~</span>inter <span class="op">+</span><span class="st"> </span>hl <span class="op">+</span><span class="st"> </span>langa)
+<span class="kw">summary</span>(<span class="kw">lm</span>(model))</code></pre></div>
+<pre><code>## 
+## Call:
+## lm(formula = model)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -1.96459 -0.54251 -0.02009  0.47991  2.59940 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  1.84509    0.03845  47.981  &lt; 2e-16 ***
+## interKIR    -0.14191    0.02007  -7.069 1.73e-12 ***
+## hlYes       -0.30259    0.03056  -9.901  &lt; 2e-16 ***
+## langaYes     0.11949    0.02637   4.532 5.96e-06 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.7926 on 6237 degrees of freedom
+##   (158 observations deleted due to missingness)
+## Multiple R-squared:  0.02793,    Adjusted R-squared:  0.02746 
+## F-statistic: 59.73 on 3 and 6237 DF,  p-value: &lt; 2.2e-16</code></pre>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
