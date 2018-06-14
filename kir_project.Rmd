@@ -4,14 +4,15 @@ author: "Team Clueless"
 output: html_document
 ---
 
-```{r,echo=FALSE,message = FALSE, warning = FALSE}
+```{r, include = FALSE, echo=FALSE, message = FALSE, warning = FALSE}
 library(ggplot2)
 library(dplyr)
 library(knitr)
+library(pander)
 projectdata = read.delim("C:/Users/mitch/Documents/portfolio/data/youth29jul15.txt", header=TRUE,sep="\t")
 ```
 
-```{r}
+```{r, include = FALSE, echo=FALSE, message = FALSE, warning = FALSE}
 langa = as.factor(projectdata$LANGA)
 levels(langa) = c("No", "Yes")
 hl = as.factor(projectdata$HL)
@@ -23,56 +24,45 @@ inter = as.factor(projectdata$intervention)
 levels(inter) = c("No KIR", "KIR")
 ```
 
-bivariate 1
-```{r}
+The Keeping It Real dataset was provided by my professor. The project sought to help middle school and high school students understand that their peers weren't as sexually active as they believed. 
+
+After cleaning the data we wanted to see whether Hispanic/Latino students had a different perception about their peers than non-Hispanic/Latino students. 
+
+```{r,  echo=FALSE, message = FALSE, warning = FALSE}
 df4 = na.omit(data.frame(hl,friends))
 ggplot(df4,aes(x = friends, col= hl)) + 
   geom_density() + ggtitle("Perceptions of Freinds Having Sex by Hispanic/Latino:") 
 ```
-analysis: difference in mean
 
-```{r}
-t.test(friends~hl, data=df4)
+The friends variable is a psuedo-continuous variable that goes from 0-4. A 0 means that the student does not think and friends are having sex and a 4 means that the student thinks that all of their friends are having sex. It definitely looks like Hispanic/Latino students think that less of their peers are having sex, but we'll do a t test to be more sure.
+
+
+```{r, echo=FALSE, message = FALSE, warning = FALSE}
+pander(t.test(friends~hl, data=df4))
 ```
-There is strong evidence that Hispanic/Latino and non-Hispanic/Latino students have different perceptions about their friends having sex (p = 2.2e-16). 
+There is strong evidence that Hispanic/Latino and non-Hispanic/Latino students have different perceptions about their friends having sex (p = 1.505e-19). 
 
 
-bivariate 2
-```{r}
-df5= na.omit(data.frame(hl,langa))
-ggplot(df5, aes(x = langa, fill = hl )) + geom_bar(position = "dodge")  + ggtitle("Speak English at Home")
+Next we wanted to see if the KIR intervention did what it sought out to do. We compared students that had the intervention and students that did not have the intervention. 
 
-addmargins(table(hl,langa))
-round(prop.table(table(hl,langa),margin = 1),3)
-```
-analisys: difference in proportion?
-
-```{r}
-prop.test(x=c(714, 4462), n=c(778, 5525))
-```
-There is strong evidence that the proportion of students that do speak English at home is not the same for Hispanic/Latino and non-Hispanic/Latino students(p = 8.927e-14). 
-
-
-bivariate 3
-```{r}
+```{r, echo=FALSE, message = FALSE, warning = FALSE}
 ggplot(projectdata,aes(x = friends, col= inter)) + 
   geom_density() + ggtitle("Effects of KIR:") 
 ```
-analysis: difference in mean
 
-```{r}
+We can see that students the were in the intervention have a lower perception score about their friends having sex. Again we'll do a t test to be more sure.
+
+```{r, echo=FALSE, message = FALSE, warning = FALSE}
 df2 = na.omit(data.frame(inter,friends))
-t.test(friends~inter, data=df2)
+pander(t.test(friends~inter, data=df2))
 ```
 There is strong evidence that KIR did effect students perceptions of their friends having sex (p = 2.807e-12).
 
+Finally, we looked to see if KIR had a different level of effect in students that are Hispanic or Latino. 
 
-
-Multivariable model: We are looking to see if KIR had a different level of effect in students that are Hispanic or Latino. 
-```{r}
-model = aov(friends~inter + hl + langa)
+```{r, echo=FALSE, message = FALSE, warning = FALSE}
+model = aov(friends~inter + hl)
 summary(lm(model))
 
-
 ```
-
+With a p value of 2e-16 we can see that the KIR intervention is different for Hispanic/Latino students.  

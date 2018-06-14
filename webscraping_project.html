@@ -229,13 +229,12 @@ $(document).ready(function () {
 </div>
 
 
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(rvest)</code></pre></div>
-<pre><code>## Loading required package: xml2</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(stringr)</code></pre></div>
-<pre><code>## Warning: package &#39;stringr&#39; was built under R version 3.4.4</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(lubridate)
-
-events =<span class="st"> </span><span class="kw">read_html</span>(<span class="st">&quot;https://www.onthisday.com/events/date/2017&quot;</span>)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(rvest)
+<span class="kw">library</span>(stringr)
+<span class="kw">library</span>(lubridate)
+<span class="kw">library</span>(pander)</code></pre></div>
+<p>Each of these code chunks takes the data from a page on the website and splits it up into 3 columns split by the frist 3 spaces.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">events =<span class="st"> </span><span class="kw">read_html</span>(<span class="st">&quot;https://www.onthisday.com/events/date/2017&quot;</span>)
 
 rank_data_html &lt;-<span class="st"> </span><span class="kw">html_nodes</span>(events,<span class="st">&#39;.mc-closeModal , .event-list__item&#39;</span>)
 
@@ -251,7 +250,54 @@ df1 =<span class="st"> </span><span class="kw">data.frame</span>(<span class="kw
   df1[i,<span class="dv">3</span>] =<span class="st"> </span><span class="kw">str_flatten</span>(splits[[<span class="dv">1</span>]][<span class="dv">3</span><span class="op">:</span><span class="kw">length</span>(splits[[<span class="dv">1</span>]])], <span class="st">&quot; &quot;</span>)
 }
 
-events2 =<span class="st"> </span><span class="kw">read_html</span>(<span class="st">&quot;https://www.onthisday.com/events/date/2017?p=2&quot;</span>)
+<span class="kw">pander</span>(<span class="kw">head</span>(df1))</code></pre></div>
+<table style="width:60%;">
+<colgroup>
+<col width="8%" />
+<col width="6%" />
+<col width="44%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">X1</th>
+<th align="center">X2</th>
+<th align="center">X3</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">Jan</td>
+<td align="center">2</td>
+<td align="center">US House Republicans vote to gut the independent Office of Congressional Ethics, a public uproar forces them to back down the next day</td>
+</tr>
+<tr class="even">
+<td align="center">Jan</td>
+<td align="center">17</td>
+<td align="center">Nigerian military mistakely bomb refugee camp killing more than 70 in Rann, Borno state</td>
+</tr>
+<tr class="odd">
+<td align="center">Jan</td>
+<td align="center">17</td>
+<td align="center">Search for missing aircraft MH370 over the Indian Ocean is called off</td>
+</tr>
+<tr class="even">
+<td align="center">Jan</td>
+<td align="center">18</td>
+<td align="center">NASA and NOAA announce that 2016 was the hottest year on record, surpassing the previous record set in 2015 which itself topped a record set in 2014</td>
+</tr>
+<tr class="odd">
+<td align="center">Jan</td>
+<td align="center">19</td>
+<td align="center">Adama Barrow sworn in as President of Gambia in Dahkar as Senegalese troops enter Gambia to persuade former President Yahya Jammeh to leave</td>
+</tr>
+<tr class="even">
+<td align="center">Jan</td>
+<td align="center">19</td>
+<td align="center">High-rise building collapses in Tehran, killing 20 firefighters</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">events2 =<span class="st"> </span><span class="kw">read_html</span>(<span class="st">&quot;https://www.onthisday.com/events/date/2017?p=2&quot;</span>)
 
 rank_data_html2 &lt;-<span class="st"> </span><span class="kw">html_nodes</span>(events2,<span class="st">&#39;.event-list__item&#39;</span>)
 
@@ -265,10 +311,8 @@ df2 =<span class="st"> </span><span class="kw">data.frame</span>(<span class="kw
   df2[i,<span class="dv">1</span>] =<span class="st"> </span>splits[[<span class="dv">1</span>]][<span class="dv">1</span>]
   df2[i,<span class="dv">2</span>] =<span class="st"> </span>splits[[<span class="dv">1</span>]][<span class="dv">2</span>]
   df2[i,<span class="dv">3</span>] =<span class="st"> </span><span class="kw">str_flatten</span>(splits[[<span class="dv">1</span>]][<span class="dv">3</span><span class="op">:</span><span class="kw">length</span>(splits[[<span class="dv">1</span>]])], <span class="st">&quot; &quot;</span>)
-}
-
-
-events2 =<span class="st"> </span><span class="kw">read_html</span>(<span class="st">&quot;https://www.onthisday.com/events/date/2017?p=3&quot;</span>)
+}</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">events2 =<span class="st"> </span><span class="kw">read_html</span>(<span class="st">&quot;https://www.onthisday.com/events/date/2017?p=3&quot;</span>)
 
 rank_data_html2 &lt;-<span class="st"> </span><span class="kw">html_nodes</span>(events2,<span class="st">&#39;.event-list__item&#39;</span>)
 
@@ -282,9 +326,8 @@ df3 =<span class="st"> </span><span class="kw">data.frame</span>(<span class="kw
   df3[i,<span class="dv">1</span>] =<span class="st"> </span>splits[[<span class="dv">1</span>]][<span class="dv">1</span>]
   df3[i,<span class="dv">2</span>] =<span class="st"> </span>splits[[<span class="dv">1</span>]][<span class="dv">2</span>]
   df3[i,<span class="dv">3</span>] =<span class="st"> </span><span class="kw">str_flatten</span>(splits[[<span class="dv">1</span>]][<span class="dv">3</span><span class="op">:</span><span class="kw">length</span>(splits[[<span class="dv">1</span>]])], <span class="st">&quot; &quot;</span>)
-}
-
-events2 =<span class="st"> </span><span class="kw">read_html</span>(<span class="st">&quot;https://www.onthisday.com/events/date/2017?p=4&quot;</span>)
+}</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">events2 =<span class="st"> </span><span class="kw">read_html</span>(<span class="st">&quot;https://www.onthisday.com/events/date/2017?p=4&quot;</span>)
 
 rank_data_html2 &lt;-<span class="st"> </span><span class="kw">html_nodes</span>(events2,<span class="st">&#39;.event-list__item&#39;</span>)
 
@@ -298,9 +341,8 @@ df4 =<span class="st"> </span><span class="kw">data.frame</span>(<span class="kw
   df4[i,<span class="dv">1</span>] =<span class="st"> </span>splits[[<span class="dv">1</span>]][<span class="dv">1</span>]
   df4[i,<span class="dv">2</span>] =<span class="st"> </span>splits[[<span class="dv">1</span>]][<span class="dv">2</span>]
   df4[i,<span class="dv">3</span>] =<span class="st"> </span><span class="kw">str_flatten</span>(splits[[<span class="dv">1</span>]][<span class="dv">3</span><span class="op">:</span><span class="kw">length</span>(splits[[<span class="dv">1</span>]])], <span class="st">&quot; &quot;</span>)
-}
-
-events2 =<span class="st"> </span><span class="kw">read_html</span>(<span class="st">&quot;https://www.onthisday.com/events/date/2016?p=2&quot;</span>)
+}</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">events2 =<span class="st"> </span><span class="kw">read_html</span>(<span class="st">&quot;https://www.onthisday.com/events/date/2016?p=2&quot;</span>)
 
 rank_data_html2 &lt;-<span class="st"> </span><span class="kw">html_nodes</span>(events2,<span class="st">&#39;.event-list__item&#39;</span>)
 
@@ -314,9 +356,9 @@ df5 =<span class="st"> </span><span class="kw">data.frame</span>(<span class="kw
   df5[i,<span class="dv">1</span>] =<span class="st"> </span>splits[[<span class="dv">1</span>]][<span class="dv">1</span>]
   df5[i,<span class="dv">2</span>] =<span class="st"> </span>splits[[<span class="dv">1</span>]][<span class="dv">2</span>]
   df5[i,<span class="dv">3</span>] =<span class="st"> </span><span class="kw">str_flatten</span>(splits[[<span class="dv">1</span>]][<span class="dv">3</span><span class="op">:</span><span class="kw">length</span>(splits[[<span class="dv">1</span>]])], <span class="st">&quot; &quot;</span>)
-}
-
-df5<span class="op">$</span>year =<span class="st"> </span><span class="dv">2016</span>
+}</code></pre></div>
+<p>Then I needed to combine the day and month column together with a new year column in order to make a date object.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">df5<span class="op">$</span>year =<span class="st"> </span><span class="dv">2016</span>
 
 <span class="kw">colnames</span>(df5) =<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;month&quot;</span>, <span class="st">&quot;day&quot;</span>, <span class="st">&quot;event&quot;</span>,<span class="st">&quot;year&quot;</span>)
 df5 =<span class="st"> </span>df5[<span class="kw">c</span>(<span class="st">&quot;year&quot;</span>, <span class="st">&quot;month&quot;</span>, <span class="st">&quot;day&quot;</span>,<span class="st">&quot;event&quot;</span>)]
@@ -340,23 +382,55 @@ events<span class="op">$</span>date =<span class="st"> </span><span class="kw">a
 
 events =<span class="st"> </span>events[<span class="kw">c</span>(<span class="st">&quot;date&quot;</span>, <span class="st">&quot;event&quot;</span>)]
 
-events =<span class="st"> </span>events[<span class="op">-</span><span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">91</span>),]
-
-<span class="kw">head</span>(events)</code></pre></div>
-<pre><code>##          date
-## 92 2016-10-30
-## 93 2016-10-31
-## 94 2016-11-02
-## 95 2016-11-04
-## 96 2016-11-06
-## 97 2016-11-08
-##                                                                                                                                                    event
-## 92                                                                                    Canada and the EU sign free trade deal after opposition by Belgium
-## 93                                                                    Lebanon parliament elects Michel Aoun President after 2 1/2 years without a leader
-## 94                                             MLB World Series: Chicago Cubs defeat Cleveland Indians in game 7, 8-7, 1st Cubs series win for 108 years
-## 95                                                                                                   Paris Agreement on climate change becomes effective
-## 96                            Indian government declares levels of air pollution in Delhi an emergency situation, closing schools and construction sites
-## 97 Republican Donald Trump is elected President of the United States of America, defeating democrat Hillary Clinton, who received 2.9 million more votes</code></pre>
+events =<span class="st"> </span>events[<span class="op">-</span><span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">91</span>),]</code></pre></div>
+<p>And here is a peak at all its glory.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">pander</span>(<span class="kw">head</span>(events))</code></pre></div>
+<table style="width:75%;">
+<colgroup>
+<col width="12%" />
+<col width="18%" />
+<col width="44%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center"> </th>
+<th align="center">date</th>
+<th align="center">event</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center"><strong>92</strong></td>
+<td align="center">2016-10-30</td>
+<td align="center">Canada and the EU sign free trade deal after opposition by Belgium</td>
+</tr>
+<tr class="even">
+<td align="center"><strong>93</strong></td>
+<td align="center">2016-10-31</td>
+<td align="center">Lebanon parliament elects Michel Aoun President after 2 1/2 years without a leader</td>
+</tr>
+<tr class="odd">
+<td align="center"><strong>94</strong></td>
+<td align="center">2016-11-02</td>
+<td align="center">MLB World Series: Chicago Cubs defeat Cleveland Indians in game 7, 8-7, 1st Cubs series win for 108 years</td>
+</tr>
+<tr class="even">
+<td align="center"><strong>95</strong></td>
+<td align="center">2016-11-04</td>
+<td align="center">Paris Agreement on climate change becomes effective</td>
+</tr>
+<tr class="odd">
+<td align="center"><strong>96</strong></td>
+<td align="center">2016-11-06</td>
+<td align="center">Indian government declares levels of air pollution in Delhi an emergency situation, closing schools and construction sites</td>
+</tr>
+<tr class="even">
+<td align="center"><strong>97</strong></td>
+<td align="center">2016-11-08</td>
+<td align="center">Republican Donald Trump is elected President of the United States of America, defeating democrat Hillary Clinton, who received 2.9 million more votes</td>
+</tr>
+</tbody>
+</table>
 
 
 

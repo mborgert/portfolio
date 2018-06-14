@@ -66,9 +66,7 @@ parHiv$PB25[x == 4] <- 1
 
 ```{r,echo=FALSE,message=FALSE,warning=FALSE,error=FALSE}
 parHiv2 = parHiv %>% select(BSI01:BSI53) 
-summary(parHiv2)
-#parHiv2 = as.data.frame(lapply(parHiv2,factor))
-
+#parHiv2 = as.data.frame(
 stanHiv = as.data.frame(scale(parHiv2))
 #for(i in 1:53){
   #levels(parHiv2[,i]) = c("Not at all","A little bit","Moderately","Quite a bit","Extremely")
@@ -82,7 +80,7 @@ qplot(x=1:length(var_pc), y=var_pc, geom=c("point", "line")) +
 
 ```
 
-We can see that all the data ranges from 0 to 4. There are no outlines or detectable wrongly entered data. There are a few na's in the data. The corrplot has some very small groupings of variables when it is forced to do 9. This may leave us with some lackluster factors that do no fit what is predicted. The scree plot tells us that we could take 2 factors if we followed the elbow rule or about 12 factors if we choose to go for an eigenvalue less than 1. We will still try 9 since that is what is predicted. 
+The corrplot has some very small groupings of variables when it is forced to do 9. This may leave us with some lackluster factors that do no fit what is predicted. The scree plot tells us that we could take 2 factors if we followed the elbow rule or about 12 factors if we choose to go for an eigenvalue less than 1. We will still try 9 since that is what is predicted. 
 
 #Factors and their loadings
 
@@ -113,11 +111,9 @@ parHivScores = data.frame(parHiv,scores)
 ```
 
 
-#Creation of parental overprotection subscale
 
-Now I've created the parental overprotection subscale manually and here are the summary stats.
 
-```{r,echo=FALSE,message=FALSE,warning=FALSE,error=FALSE}
+```{r,include = FALSE, echo=FALSE,message=FALSE,warning=FALSE,error=FALSE}
 paroverprotect = parHiv %>% select(PB03,PB07,PB08,PB09,PB10,PB13,PB15,PB19,PB20,PB21,PB22,PB23,PB25) %>% t() %>% data.frame()
 overprotection = 1:252
 for(i in overprotection){

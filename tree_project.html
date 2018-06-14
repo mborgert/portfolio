@@ -229,7 +229,6 @@ $(document).ready(function () {
 </div>
 
 
-<p>The purpose of this experiment was to find to best realistic way to estimate the number of trees on two types of 1000x1000 meter plantations. One plantation had randomly distributed trees and the other had them distributed nonrandomly. The area surveyed for each combination of plot size and sample number was always 50x50 meters. Data was collected for 1x1, 5x5, 10x10, and 25x25 plots. These plots were sampled 2500, 100, 25, and 4 times. Data was collected for plantations with 1000, 2500, and 3,000 trees.</p>
 <p>Data was collected using a function created in R that would estimate the total number of trees. I have unfortunately lost that function, but I can describe it. First, parameters were entered for plot size, sample size, total number of plots, and number of trees. Next, a function is used to distribute the trees and create the x and y coordinates. Then the estimator function was ran 2500 times in order to create a large, accurate sample of what is happening. The function returns a matrix with the data and I then took the mean for the total estimate, the variance, and whether the actual number of trees with within a 95% confidence interval. I then took these values and put them into a dataframe. Here are the results:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(ggplot2)
 tauhat =<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;C:/Users/mitch/Documents/portfolio/data/tauhat.csv&quot;</span>)
