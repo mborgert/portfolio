@@ -43,7 +43,7 @@ predictions = data.frame(predict(mod1,df))
 predictions = predictions %>% mutate(probs = predict.mod1..df./100, seats = 435*probs) %>% mutate(super = as.numeric((seats > 70)), regmaj = as.numeric((seats > 0)) )
 ```
 
-###I created the demwin variable since I was prediction the chance the democrats would have a majority. This variable was just dem - rep to see the difference in support.
+###This data created from two datasets from 538. Appr is the presidents approval rating, samplesize is the sample size of each poll, enddate is when the poll was finished, and dem and rep are what percent of people want to vote for each party. I created the demwin variable since I was prediction the chance the democrats would have a majority. This variable was just dem - rep to see the difference in support.
 
 ##Predictions using a linear model:
 
@@ -53,9 +53,9 @@ mean(predictions$super)
 mean(predictions$regmaj)
 ```
 
-### I created a linear model with this variable as the response. The explanatory variables were approval, sample size of the poll, and the end date of the poll. I then created a dataframe with approval from 30% to 50% since thats close to the range of his approval, sample size constant at 1000, and the end date constant at the last data a poll was recorded. I used this dataframe to create a distribution of predictions for democratic support over republicans based on Trump's approval rating. I then used the predictions to find how many more seats in the house one party would win over the other. One party must have 70 more seats than the other to have a super majority and 1 more seat to have a regular majority. The probability for a super majority is 1 and the probability for a regular majority is 0. 
+### First I created a linear model which used appr, samplesize, and enddate as predictors for demwin. I then created a dataframe with approval from 30% to 50% since thats close to the range of his approval, sample size constant at 1000, and the end date constant at the last data a poll was recorded. I used this dataframe to create a distribution of predictions for democratic support over republicans based on Trump's approval rating. I then used the predictions to find how many more seats in the house one party would win over the other. One party must have 70 more seats than the other to have a super majority and 1 more seat to have a regular majority. The probability for a super majority is 1 and the probability for a regular majority is 0. 
 
-
+##Predictions using a cross validated tree:
 ```{r,message=FALSE,warning=FALSE,error=FALSE}
 dat = mid_appr %>% select(demwin,appr,samplesize,enddate)
 set.seed(1)
@@ -69,7 +69,7 @@ plot(mod2prune)
 text(mod2prune, pretty = 0)
 ```
 
-####Heres the nice looking tree and the plot I used to find the best size. 
+###First I made the tree and pruned it.
 
 ```{r}
 predictions2 = data.frame(predict(mod2prune,df))
@@ -82,5 +82,5 @@ mean(predictions2$regmaj)
 
 ```
 
-###I have the same variables as before but this time I made a tree. I then used cross validation on this tree to get the best size and I then pruned the tree. With a tree there are only 4 options for the amount of seats that one party will win over the other. Democrats are 100% expected to have a majority, but they are not expected to have a super majority according to this tree. I feel that a tree would be much better with more related variables in the dataframe. 
+###I have the same variables as before but this time I made a tree. Democrats are 100% expected to have a majority, but they are not expected to have a super majority according to this tree. I feel that a tree would be much better with more related variables in the dataframe. 
 
