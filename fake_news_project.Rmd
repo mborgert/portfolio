@@ -55,9 +55,11 @@ library(ResourceSelection)
 library(knitr)
 ```
 
+Our goal for this project was to look at how different political parties viewed fakes news. Our data set was from the PEW Research center and it contained question such as "How well do you think you can determine a fake news story". These type of questions are the PEW questions and are at the end of this page. First we looked at how the variables were distributed.  
+
 ## Political Affiliations of Population
 
-```{r, fig.align='center', echo = FALSE, out.width =1536, out.height=800}
+```{r, fig.align='center', echo=FALSE, message = FALSE, warning = FALSE, out.width =1536, out.height=800}
 party   <- ggplot(pewdata,aes(x=party, fill = ideo, group = ideo)) + 
   geom_bar(position = 'dodge') +
   geom_text(stat = 'count', position=position_dodge(width = 1),
@@ -76,9 +78,11 @@ party   <- ggplot(pewdata,aes(x=party, fill = ideo, group = ideo)) +
 party
 ```
 
+Here we looked at political party and political idealology. A few of the responses were odd, with a couple very liberal republicans or very conservative democrats. 
+
 ## Pew Responses
   
-```{r, fig.align='center', echo = FALSE, out.width =1536, out.height=800}
+```{r, fig.align='center', echo=FALSE, message = FALSE, warning = FALSE, out.width =1536, out.height=800}
 library(reshape2)
 
 x <- pewdata[,c('pew1','pew2','pew5a','pew5b','pew5c','pew6','pew7')] %>% sapply(summary)
@@ -92,9 +96,11 @@ ggplot(aes(x = Var2, y = value, fill = Var1, label = value), data = pew.df) +
 
 ```
 
+Next we made a graph to look at the distribution of answers for the PEW questions. 
+
 ## Pew questions vs Ideology
 
-```{r, fig.align='center', echo = FALSE, out.width =1536, out.height=800,message=FALSE}
+```{r, fig.align='center', echo = FALSE, out.width =1536, out.height=700,message=FALSE}
 
 pew1ideo = pewdata %>% select(pew1,ideo) %>% na.omit()  
 pew1ideotable = data.frame(prop.table(table(pew1ideo),margin=2))
@@ -136,7 +142,9 @@ pewideo = grid.arrange(p11,p21,p61,p71)
 pewideo
 ```
 
-```{r}
+Then we looked at how the PEW questions distributed across idealology. 
+
+```{r, echo=FALSE, message = FALSE, warning = FALSE}
 levels(pewdata$ideo) = c("Extreme","Moderate" , "Moderate", "Moderate","Extreme")
 pew2 <- pewdata %>% select(pew1,pew2,pew3,pew4,pew5a,pew5b,pew5c,pew6,pew7,ideo,sex,age,educ2) %>% na.omit
 
@@ -166,6 +174,7 @@ plot.mpp$pred.class <- factor(plot.mpp$pred.class, labels=c("Extreme", "Moderate
 confusionMatrix(plot.mpp$pred.class, plot.mpp$truth, positive="Extreme")
 ```
 
+We then created a model to see if we could predict how extreme one's political idealology was based on their answers to these questions and had an 82% accuracy rate. 
 
 ```{r}
 levels(pewdata$party)
@@ -197,3 +206,4 @@ confusionMatrix(plot.mod1pp$pred.class, plot.mod1pp$truth, positive="Republican"
 
 ```
 
+We also tried this with political party, but it was less accurate.

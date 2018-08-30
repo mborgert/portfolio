@@ -301,8 +301,8 @@ $(document).ready(function () {
 </tr>
 </tbody>
 </table>
-<div id="i-created-the-demwin-variable-since-i-was-prediction-the-chance-the-democrats-would-have-a-majority.-this-variable-was-just-dem---rep-to-see-the-difference-in-support." class="section level3">
-<h3>I created the demwin variable since I was prediction the chance the democrats would have a majority. This variable was just dem - rep to see the difference in support.</h3>
+<div id="this-data-created-from-two-datasets-from-538.-appr-is-the-presidents-approval-rating-samplesize-is-the-sample-size-of-each-poll-enddate-is-when-the-poll-was-finished-and-dem-and-rep-are-what-percent-of-people-want-to-vote-for-each-party.-i-created-the-demwin-variable-since-i-was-prediction-the-chance-the-democrats-would-have-a-majority.-this-variable-was-just-dem---rep-to-see-the-difference-in-support." class="section level3">
+<h3>This data created from two datasets from 538. Appr is the presidents approval rating, samplesize is the sample size of each poll, enddate is when the poll was finished, and dem and rep are what percent of people want to vote for each party. I created the demwin variable since I was prediction the chance the democrats would have a majority. This variable was just dem - rep to see the difference in support.</h3>
 </div>
 </div>
 <div id="predictions-using-a-linear-model" class="section level2">
@@ -313,8 +313,12 @@ $(document).ready(function () {
 <pre><code>## [1] 0</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">mean</span>(predictions<span class="op">$</span>regmaj)</code></pre></div>
 <pre><code>## [1] 1</code></pre>
-<div id="i-created-a-linear-model-with-this-variable-as-the-response.-the-explanatory-variables-were-approval-sample-size-of-the-poll-and-the-end-date-of-the-poll.-i-then-created-a-dataframe-with-approval-from-30-to-50-since-thats-close-to-the-range-of-his-approval-sample-size-constant-at-1000-and-the-end-date-constant-at-the-last-data-a-poll-was-recorded.-i-used-this-dataframe-to-create-a-distribution-of-predictions-for-democratic-support-over-republicans-based-on-trumps-approval-rating.-i-then-used-the-predictions-to-find-how-many-more-seats-in-the-house-one-party-would-win-over-the-other.-one-party-must-have-70-more-seats-than-the-other-to-have-a-super-majority-and-1-more-seat-to-have-a-regular-majority.-the-probability-for-a-super-majority-is-1-and-the-probability-for-a-regular-majority-is-0." class="section level3">
-<h3>I created a linear model with this variable as the response. The explanatory variables were approval, sample size of the poll, and the end date of the poll. I then created a dataframe with approval from 30% to 50% since thats close to the range of his approval, sample size constant at 1000, and the end date constant at the last data a poll was recorded. I used this dataframe to create a distribution of predictions for democratic support over republicans based on Trump’s approval rating. I then used the predictions to find how many more seats in the house one party would win over the other. One party must have 70 more seats than the other to have a super majority and 1 more seat to have a regular majority. The probability for a super majority is 1 and the probability for a regular majority is 0.</h3>
+<div id="first-i-created-a-linear-model-which-used-appr-samplesize-and-enddate-as-predictors-for-demwin.-i-then-created-a-dataframe-with-approval-from-30-to-50-since-thats-close-to-the-range-of-his-approval-sample-size-constant-at-1000-and-the-end-date-constant-at-the-last-data-a-poll-was-recorded.-i-used-this-dataframe-to-create-a-distribution-of-predictions-for-democratic-support-over-republicans-based-on-trumps-approval-rating.-i-then-used-the-predictions-to-find-how-many-more-seats-in-the-house-one-party-would-win-over-the-other.-one-party-must-have-70-more-seats-than-the-other-to-have-a-super-majority-and-1-more-seat-to-have-a-regular-majority.-the-probability-for-a-super-majority-is-1-and-the-probability-for-a-regular-majority-is-0." class="section level3">
+<h3>First I created a linear model which used appr, samplesize, and enddate as predictors for demwin. I then created a dataframe with approval from 30% to 50% since thats close to the range of his approval, sample size constant at 1000, and the end date constant at the last data a poll was recorded. I used this dataframe to create a distribution of predictions for democratic support over republicans based on Trump’s approval rating. I then used the predictions to find how many more seats in the house one party would win over the other. One party must have 70 more seats than the other to have a super majority and 1 more seat to have a regular majority. The probability for a super majority is 1 and the probability for a regular majority is 0.</h3>
+</div>
+</div>
+<div id="predictions-using-a-cross-validated-tree" class="section level2">
+<h2>Predictions using a cross validated tree:</h2>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">dat =<span class="st"> </span>mid_appr <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(demwin,appr,samplesize,enddate)
 <span class="kw">set.seed</span>(<span class="dv">1</span>)
 mod2 &lt;-<span class="st"> </span><span class="kw">tree</span>(demwin <span class="op">~</span><span class="st"> </span>.<span class="op">-</span>demwin, <span class="dt">data =</span> dat)
@@ -326,8 +330,8 @@ cv.dat &lt;-<span class="st"> </span><span class="kw">cv.tree</span>(mod2)
 <span class="kw">plot</span>(mod2prune)
 <span class="kw">text</span>(mod2prune, <span class="dt">pretty =</span> <span class="dv">0</span>)</code></pre></div>
 <p><img src="midterm_project_files/figure-html/unnamed-chunk-4-2.png" width="672" /></p>
-<div id="heres-the-nice-looking-tree-and-the-plot-i-used-to-find-the-best-size." class="section level4">
-<h4>Heres the nice looking tree and the plot I used to find the best size.</h4>
+<div id="first-i-made-the-tree-and-pruned-it." class="section level3">
+<h3>First I made the tree and pruned it.</h3>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">predictions2 =<span class="st"> </span><span class="kw">data.frame</span>(<span class="kw">predict</span>(mod2prune,df))</code></pre></div>
 <pre><code>## Warning in pred1.tree(object, tree.matrix(newdata)): NAs introduced by
 ## coercion</code></pre>
@@ -340,9 +344,8 @@ cv.dat &lt;-<span class="st"> </span><span class="kw">cv.tree</span>(mod2)
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">mean</span>(predictions2<span class="op">$</span>regmaj)</code></pre></div>
 <pre><code>## [1] 1</code></pre>
 </div>
-</div>
-<div id="i-have-the-same-variables-as-before-but-this-time-i-made-a-tree.-i-then-used-cross-validation-on-this-tree-to-get-the-best-size-and-i-then-pruned-the-tree.-with-a-tree-there-are-only-4-options-for-the-amount-of-seats-that-one-party-will-win-over-the-other.-democrats-are-100-expected-to-have-a-majority-but-they-are-not-expected-to-have-a-super-majority-according-to-this-tree.-i-feel-that-a-tree-would-be-much-better-with-more-related-variables-in-the-dataframe." class="section level3">
-<h3>I have the same variables as before but this time I made a tree. I then used cross validation on this tree to get the best size and I then pruned the tree. With a tree there are only 4 options for the amount of seats that one party will win over the other. Democrats are 100% expected to have a majority, but they are not expected to have a super majority according to this tree. I feel that a tree would be much better with more related variables in the dataframe.</h3>
+<div id="i-have-the-same-variables-as-before-but-this-time-i-made-a-tree.-democrats-are-100-expected-to-have-a-majority-but-they-are-not-expected-to-have-a-super-majority-according-to-this-tree.-i-feel-that-a-tree-would-be-much-better-with-more-related-variables-in-the-dataframe." class="section level3">
+<h3>I have the same variables as before but this time I made a tree. Democrats are 100% expected to have a majority, but they are not expected to have a super majority according to this tree. I feel that a tree would be much better with more related variables in the dataframe.</h3>
 </div>
 </div>
 

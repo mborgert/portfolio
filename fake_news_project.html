@@ -229,33 +229,27 @@ $(document).ready(function () {
 </div>
 
 
+<p>Our goal for this project was to look at how different political parties viewed fakes news. Our data set was from the PEW Research center and it contained question such as “How well do you think you can determine a fake news story”. These type of questions are the PEW questions and are at the end of this page. First we looked at how the variables were distributed.</p>
 <div id="political-affiliations-of-population" class="section level2">
 <h2>Political Affiliations of Population</h2>
 <p><img src="fake_news_project_files/figure-html/unnamed-chunk-3-1.png" width="1536" height="800" style="display: block; margin: auto;" /></p>
+<p>Here we looked at political party and political idealology. A few of the responses were odd, with a couple very liberal republicans or very conservative democrats.</p>
 </div>
 <div id="pew-responses" class="section level2">
 <h2>Pew Responses</h2>
-<pre><code>## 
-## Attaching package: &#39;reshape2&#39;</code></pre>
-<pre><code>## The following object is masked from &#39;package:tidyr&#39;:
-## 
-##     smiths</code></pre>
 <p><img src="fake_news_project_files/figure-html/unnamed-chunk-4-1.png" width="1536" height="800" style="display: block; margin: auto;" /></p>
+<p>Next we made a graph to look at the distribution of answers for the PEW questions.</p>
 </div>
 <div id="pew-questions-vs-ideology" class="section level2">
 <h2>Pew questions vs Ideology</h2>
-<p><img src="fake_news_project_files/figure-html/unnamed-chunk-5-1.png" width="1536" height="800" style="display: block; margin: auto;" /></p>
+<p><img src="fake_news_project_files/figure-html/unnamed-chunk-5-1.png" width="1536" height="700" style="display: block; margin: auto;" /></p>
 <pre><code>## TableGrob (2 x 2) &quot;arrange&quot;: 4 grobs
 ##   z     cells    name           grob
 ## 1 1 (1-1,1-1) arrange gtable[layout]
 ## 2 2 (1-1,2-2) arrange gtable[layout]
 ## 3 3 (2-2,1-1) arrange gtable[layout]
 ## 4 4 (2-2,2-2) arrange gtable[layout]</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">levels</span>(pewdata<span class="op">$</span>ideo) =<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Extreme&quot;</span>,<span class="st">&quot;Moderate&quot;</span> , <span class="st">&quot;Moderate&quot;</span>, <span class="st">&quot;Moderate&quot;</span>,<span class="st">&quot;Extreme&quot;</span>)
-pew2 &lt;-<span class="st"> </span>pewdata <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(pew1,pew2,pew3,pew4,pew5a,pew5b,pew5c,pew6,pew7,ideo,sex,age,educ2) <span class="op">%&gt;%</span><span class="st"> </span>na.omit
-
-mod1 &lt;-<span class="st"> </span><span class="kw">glm</span>(ideo<span class="op">~</span>.<span class="op">-</span>ideo,<span class="dt">data=</span>pew2,<span class="dt">family=</span><span class="st">&quot;binomial&quot;</span>)
-<span class="kw">summary</span>(mod1)</code></pre></div>
+<p>Then we looked at how the PEW questions distributed across idealology.</p>
 <pre><code>## 
 ## Call:
 ## glm(formula = ideo ~ . - ideo, family = &quot;binomial&quot;, data = pew2)
@@ -309,9 +303,6 @@ mod1 &lt;-<span class="st"> </span><span class="kw">glm</span>(ideo<span class="
 ## AIC: 630.53
 ## 
 ## Number of Fisher Scoring iterations: 5</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">model.pred.prob &lt;-<span class="st"> </span><span class="kw">predict</span>(mod1, <span class="dt">type=</span><span class="st">&#39;response&#39;</span>)
-df =<span class="st"> </span><span class="kw">data.frame</span>(model.pred.prob)
-<span class="kw">summary</span>(df)</code></pre></div>
 <pre><code>##  model.pred.prob 
 ##  Min.   :0.3770  
 ##  1st Qu.:0.8384  
@@ -319,26 +310,7 @@ df =<span class="st"> </span><span class="kw">data.frame</span>(model.pred.prob)
 ##  Mean   :0.8752  
 ##  3rd Qu.:0.9323  
 ##  Max.   :0.9870</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">plot.mpp &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">prediction =</span> model.pred.prob, 
-                       <span class="dt">truth =</span> <span class="kw">factor</span>(mod1<span class="op">$</span>y, <span class="dt">labels=</span><span class="kw">c</span>(<span class="st">&quot;Extreme&quot;</span>, <span class="st">&quot;Moderate&quot;</span>)))
-
-<span class="kw">ggplot</span>(plot.mpp, <span class="kw">aes</span>(<span class="dt">x=</span>truth, <span class="dt">y=</span>prediction, <span class="dt">fill=</span>truth)) <span class="op">+</span><span class="st"> </span>
-<span class="st">      </span><span class="kw">geom_jitter</span>(<span class="dt">width=</span>.<span class="dv">2</span>) <span class="op">+</span><span class="st"> </span><span class="kw">geom_violin</span>(<span class="dt">alpha=</span>.<span class="dv">4</span>) <span class="op">+</span><span class="st"> </span><span class="kw">theme_bw</span>() <span class="op">+</span><span class="st"> </span><span class="kw">geom_hline</span>(<span class="dt">yintercept=</span>.<span class="dv">79</span>)</code></pre></div>
-<p><img src="fake_news_project_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pr &lt;-<span class="st"> </span><span class="kw">prediction</span>(model.pred.prob, mod1<span class="op">$</span>y)
-perf &lt;-<span class="st"> </span><span class="kw">performance</span>(pr, <span class="dt">measure=</span><span class="st">&quot;tpr&quot;</span>, <span class="dt">x.measure=</span><span class="st">&quot;fpr&quot;</span>)
-<span class="kw">plot</span>(perf, <span class="dt">colorize=</span><span class="ot">TRUE</span>, <span class="dt">lwd=</span><span class="dv">3</span>, <span class="dt">print.cutoffs.at=</span><span class="kw">c</span>(<span class="kw">seq</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="dt">by=</span><span class="fl">0.1</span>)))
-<span class="kw">abline</span>(<span class="dt">a=</span><span class="dv">0</span>, <span class="dt">b=</span><span class="dv">1</span>, <span class="dt">lty=</span><span class="dv">2</span>)</code></pre></div>
-<p><img src="fake_news_project_files/figure-html/unnamed-chunk-6-2.png" width="672" /></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">perf.f1 &lt;-<span class="st"> </span><span class="kw">performance</span>(pr,<span class="dt">measure=</span><span class="st">&quot;f&quot;</span>)
-<span class="kw">plot</span>(perf.f1)</code></pre></div>
-<p><img src="fake_news_project_files/figure-html/unnamed-chunk-6-3.png" width="672" /></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">plot.mpp<span class="op">$</span>pred.class &lt;-<span class="st"> </span><span class="kw">ifelse</span>(plot.mpp<span class="op">$</span>prediction <span class="op">&lt;</span>.<span class="dv">79</span>, <span class="dv">0</span>,<span class="dv">1</span>)
-
-plot.mpp<span class="op">$</span>pred.class &lt;-<span class="st"> </span><span class="kw">factor</span>(plot.mpp<span class="op">$</span>pred.class, <span class="dt">labels=</span><span class="kw">c</span>(<span class="st">&quot;Extreme&quot;</span>, <span class="st">&quot;Moderate&quot;</span>))
-
-
-<span class="kw">confusionMatrix</span>(plot.mpp<span class="op">$</span>pred.class, plot.mpp<span class="op">$</span>truth, <span class="dt">positive=</span><span class="st">&quot;Extreme&quot;</span>)</code></pre></div>
+<p><img src="fake_news_project_files/figure-html/unnamed-chunk-6-1.png" width="672" /><img src="fake_news_project_files/figure-html/unnamed-chunk-6-2.png" width="672" /><img src="fake_news_project_files/figure-html/unnamed-chunk-6-3.png" width="672" /></p>
 <pre><code>## Confusion Matrix and Statistics
 ## 
 ##           Reference
@@ -365,6 +337,7 @@ plot.mpp<span class="op">$</span>pred.class &lt;-<span class="st"> </span><span 
 ##                                           
 ##        &#39;Positive&#39; Class : Extreme         
 ## </code></pre>
+<p>We then created a model to see if we could predict how extreme one’s political idealology was based on their answers to these questions and had an 82% accuracy rate.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">levels</span>(pewdata<span class="op">$</span>party)</code></pre></div>
 <pre><code>## [1] &quot;Republican&quot;    &quot;Democrat&quot;      &quot;Independent&quot;   &quot;No preference&quot;
 ## [5] &quot;Other party&quot;</code></pre>
@@ -418,6 +391,7 @@ plot.mod1pp<span class="op">$</span>pred.class &lt;-<span class="st"> </span><sp
 ##                                           
 ##        &#39;Positive&#39; Class : Republican      
 ## </code></pre>
+<p>We also tried this with political party, but it was less accurate.</p>
 </div>
 
 
