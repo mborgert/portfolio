@@ -186,6 +186,7 @@ $(document).ready(function () {
 </div>
 
 
+<p>Since our goal was to see how the variables related, I first looked at how a computer would group the variables.</p>
 <div id="data-exploration-for-factor-analysis" class="section level1">
 <h1>Data Exploration for factor analysis</h1>
 <p><img src="conf_fact_project_files/figure-html/unnamed-chunk-2-1.png" width="672" /><img src="conf_fact_project_files/figure-html/unnamed-chunk-2-2.png" width="672" /></p>
@@ -263,7 +264,7 @@ Factor 6 (RC3): BSI01,02,07,23,29,30. Somatization subscale<br />
 Factor 7 (RC7): BSI08,44,45. BSI Psychoticism subscale<br />
 Factor 8 (RC6): BSI10,11,25,28 BSI Phobic anxiety subscale<br />
 Factor 9 (RC8): BSI33,34. BSI Paranoid ideation subscale</p>
-<p>All of the factors match with at least one variable in the actual subscales except factor 9 which I am calling BSI Paranoid ideation even though it shares no factors. Factors 7 and 9 both share have a variable in Psychoticism but I chose Factor 7 simply because it came first.</p>
+<p>All of the factors match with at least one variable in the actual subscales except factor 9 which I am calling BSI Paranoid ideation even though it shares no factors. Factors 7 and 9 both share have a variable in Psychoticism but I chose Factor 7 simply because it came first. It turns out that things are not working as predicted. Now we will work on a model to predict the overprotection subscale.</p>
 </div>
 <div id="data-exploration-for-model-building" class="section level1">
 <h1>Data exploration for model building</h1>
@@ -276,6 +277,7 @@ Factor 9 (RC8): BSI33,34. BSI Paranoid ideation subscale</p>
 <h1>Model building</h1>
 <div id="for-this-first-model-i-will-just-use-the-bsi-variables-that-maximize-r2-and-some-demographic-variables." class="section level2">
 <h2>For this first model I will just use the BSI variables that maximize R^2 and some demographic variables.</h2>
+<p>First we will see what automatic variable selection thinks. Then I will try out some models and end up with model 1.</p>
 <p><img src="conf_fact_project_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
 <pre><code>##                   (Intercept)                 BSI_obsessive 
 ##                          TRUE                         FALSE 
@@ -429,6 +431,7 @@ Factor 9 (RC8): BSI33,34. BSI Paranoid ideation subscale</p>
 </div>
 <div id="for-the-second-model-i-will-try-forward-selection-starting-with-age-and-then-add-neighborhood-and-bsi-variables." class="section level2">
 <h2>For the second model I will try forward selection starting with age and then add neighborhood and bsi variables.</h2>
+<p>Similarialy I made a second model.</p>
 <table style="width:94%;">
 <colgroup>
 <col width="31%" />

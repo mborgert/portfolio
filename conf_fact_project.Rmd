@@ -62,6 +62,8 @@ parHiv$PB25[x == 3] <- 2
 parHiv$PB25[x == 4] <- 1
 ```
 
+Since our goal was to see how the variables related, I first looked at how a computer would group the variables.
+
 #Data Exploration for factor analysis
 
 ```{r,echo=FALSE,message=FALSE,warning=FALSE,error=FALSE}
@@ -102,7 +104,7 @@ Factor 7 (RC7): BSI08,44,45. BSI Psychoticism subscale
 Factor 8 (RC6): BSI10,11,25,28 BSI Phobic anxiety subscale  
 Factor 9 (RC8): BSI33,34. BSI Paranoid ideation subscale  
 
-All of the factors match with at least one variable in the actual subscales except factor 9 which I am calling BSI Paranoid ideation even though it shares no factors. Factors 7 and 9 both share have a variable in Psychoticism but I chose Factor 7 simply because it came first. 
+All of the factors match with at least one variable in the actual subscales except factor 9 which I am calling BSI Paranoid ideation even though it shares no factors. Factors 7 and 9 both share have a variable in Psychoticism but I chose Factor 7 simply because it came first. It turns out that things are not working as predicted. Now we will work on a model to predict the overprotection subscale.
 
 ```{r,echo=FALSE,message=FALSE,warning=FALSE,error=FALSE}
 names(scores) = c("BSI_obsessive","BSI_anxiety","BSI_interpersonal_sensitivity","BSI_depression","BSI_hostility","BSI_somatization","BSI_psychoticism","BSI_phobic_anxiety","BSI_paranoid_ideation")
@@ -170,6 +172,8 @@ For the neighborhood variables it looks like drug addicts in the neighborhood an
 
 ##For this first model I will just use the BSI variables that maximize R^2 and some demographic variables. 
 
+First we will see what automatic variable selection thinks. Then I will try out some models and end up with model 1.
+
 ```{r,echo=FALSE,message=FALSE,warning=FALSE,error=FALSE}
 regsubsets.out = regsubsets(overprotection~BSI_obsessive+BSI_anxiety+BSI_interpersonal_sensitivity+BSI_depression+BSI_hostility+BSI_somatization+BSI_psychoticism+BSI_phobic_anxiety+BSI_paranoid_ideation,data=parHIV)
 summary.out <- summary(regsubsets.out)
@@ -186,6 +190,8 @@ AIC(model1)
 
 
 ##For the second model I will try forward selection starting with age and then add neighborhood and bsi variables. 
+
+Similarialy I made a second model.
 
 ```{r,echo=FALSE,message=FALSE,warning=FALSE,error=FALSE}
 model2 = lm(overprotection~AGE+BSI_hostility+BSI_somatization+NGHB2+NGHB8,data=parHIV)
