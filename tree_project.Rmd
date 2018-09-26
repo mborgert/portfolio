@@ -4,9 +4,9 @@ author: "Mitch Borgert"
 output: html_document
 ---
 
-Data was collected using a function created in R that would estimate the total number of trees. I have unfortunately lost that function, but I can describe it. First, parameters were entered for plot size, sample size, total number of plots, and number of trees. Next, a function is used to distribute the trees and create the x and y coordinates. Then the estimator function was ran 2500 times in order to create a large, accurate sample of what is happening. The function returns a matrix with the data and I then took the mean for the total estimate, the variance, and whether the actual number of trees with within a 95% confidence interval. I then took these values and put them into a dataframe. Here are the results: 
+Data was collected using a function created in R that would estimate the total number of trees. I have unfortunately lost that function, but I can describe it. First, parameters were entered for plot size, sample size, total number of plots, and number of trees. Next, a function is used to distribute the trees and create the x and y coordinates. Then the estimator function was ran 2500 times in order to create a large, accurate sample of what is happening. The function returns a matrix with the data and I then took the mean for the total estimate, the variance among the total estimate, and whether the actual number of trees with within a 95% confidence interval. I then took these values and put them into a dataframe. Here are the results: 
 
-```{r}
+```{r, echo=FALSE, message = FALSE, warning = FALSE}
 library(ggplot2)
 tauhat = read.csv("C:/Users/mitch/Documents/portfolio/data/tauhat.csv")
 tauhat$plotsize = tauhat$ï..plotsize 
@@ -15,7 +15,7 @@ ggplot(tauhat, aes(x = plotsize,y=vartauhat,color = random)) + geom_point() + ge
 
 ```
 
-The variance gives us information on how accurate the sampling was. For the nonrandom plantation, variance differed greatly as the plot size became larger and sample size decreased. The variance also increased significantly when the number of trees on the plantation increased. The random distribution had a fairly constant variance when it came to plot and sample sizes. It only increased due to the number of trees.
+The vartauhat variable (variance of the total number of trees) gives us information on how accurate the sampling was. For the nonrandom plantation, variance differed greatly as the plot size became larger and sample size decreased. The variance also increased significantly when the number of trees on the plantation increased. The random distribution had a fairly constant variance when it came to plot and sample sizes. It only increased due to the number of trees.
 
 ```{r, message = FALSE, warning = FALSE}
 ggplot(tauhat, aes(x = plotsize, y = in.int, color = random)) + geom_smooth(se=FALSE)

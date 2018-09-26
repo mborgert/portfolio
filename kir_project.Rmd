@@ -24,7 +24,7 @@ inter = as.factor(projectdata$intervention)
 levels(inter) = c("No KIR", "KIR")
 ```
 
-The Keeping It Real dataset was provided by my professor. The project sought to help middle school and high school students understand that their peers weren't as sexually active as they believed. 
+Once again, the data came from a project that sought to help middle school and high school students understand that their peers weren't as sexually active as they believed. The intervention variable was basically extra sexual education. Our group was given the variable Hispanic/Latino (hl), perceptions of their friends sexual activity (friends), and whether they had the intervention (inter)
 
 After cleaning the data we wanted to see whether Hispanic/Latino students had a different perception about their peers than non-Hispanic/Latino students. 
 
@@ -58,7 +58,7 @@ pander(t.test(friends~inter, data=df2))
 ```
 There is strong evidence that KIR did effect students perceptions of their friends having sex (p = 2.807e-12).
 
-Finally, we looked to see if KIR had a different level of effect in students that are Hispanic or Latino. 
+Finally, we looked to see if KIR had a different level of effect in students that are Hispanic or Latino.  We did this by creating a linear model and checking if the variables were significant.
 
 ```{r, echo=FALSE, message = FALSE, warning = FALSE}
 model = aov(friends~inter + hl)
