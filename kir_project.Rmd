@@ -1,6 +1,5 @@
 ---
 title: "KIR Analysis"
-author: "Team Clueless"
 output: html_document
 ---
 

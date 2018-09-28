@@ -9,7 +9,6 @@
 <meta name="generator" content="pandoc" />
 
 
-<meta name="author" content="Mitch Borgert, Jerry Tucay, Aaron Schaffer" />
 
 
 <title>Fake News Project</title>
@@ -23,49 +22,6 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 
 
-<style type="text/css">code{white-space: pre;}</style>
-<style type="text/css">
-div.sourceCode { overflow-x: auto; }
-table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
-  margin: 0; padding: 0; vertical-align: baseline; border: none; }
-table.sourceCode { width: 100%; line-height: 100%; background-color: #f8f8f8; }
-td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
-td.sourceCode { padding-left: 5px; }
-pre, code { background-color: #f8f8f8; }
-code > span.kw { color: #204a87; font-weight: bold; } /* Keyword */
-code > span.dt { color: #204a87; } /* DataType */
-code > span.dv { color: #0000cf; } /* DecVal */
-code > span.bn { color: #0000cf; } /* BaseN */
-code > span.fl { color: #0000cf; } /* Float */
-code > span.ch { color: #4e9a06; } /* Char */
-code > span.st { color: #4e9a06; } /* String */
-code > span.co { color: #8f5902; font-style: italic; } /* Comment */
-code > span.ot { color: #8f5902; } /* Other */
-code > span.al { color: #ef2929; } /* Alert */
-code > span.fu { color: #000000; } /* Function */
-code > span.er { color: #a40000; font-weight: bold; } /* Error */
-code > span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
-code > span.cn { color: #000000; } /* Constant */
-code > span.sc { color: #000000; } /* SpecialChar */
-code > span.vs { color: #4e9a06; } /* VerbatimString */
-code > span.ss { color: #4e9a06; } /* SpecialString */
-code > span.im { } /* Import */
-code > span.va { color: #000000; } /* Variable */
-code > span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
-code > span.op { color: #ce5c00; font-weight: bold; } /* Operator */
-code > span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
-code > span.ex { } /* Extension */
-code > span.at { color: #c4a000; } /* Attribute */
-code > span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
-code > span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
-code > span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
-code > span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
-</style>
-<style type="text/css">
-  pre:not([class]) {
-    background-color: white;
-  }
-</style>
 
 
 <style type="text/css">
@@ -224,7 +180,6 @@ $(document).ready(function () {
 
 
 <h1 class="title toc-ignore">Fake News Project</h1>
-<h4 class="author"><em>Mitch Borgert, Jerry Tucay, Aaron Schaffer</em></h4>
 
 </div>
 
@@ -233,7 +188,7 @@ $(document).ready(function () {
 <div id="political-affiliations-of-population" class="section level2">
 <h2>Political Affiliations of Population</h2>
 <p><img src="fake_news_project_files/figure-html/unnamed-chunk-3-1.png" width="1536" height="800" style="display: block; margin: auto;" /></p>
-<p>Here we looked at political party and political idealology. A few of the responses were odd, with a couple very liberal republicans or very conservative democrats.</p>
+<p>Here we looked at political party and political ideology. A few of the responses were odd, with a couple very liberal republicans or very conservative democrats.</p>
 </div>
 <div id="pew-responses" class="section level2">
 <h2>Pew Responses</h2>
@@ -249,7 +204,7 @@ $(document).ready(function () {
 ## 2 2 (1-1,2-2) arrange gtable[layout]
 ## 3 3 (2-2,1-1) arrange gtable[layout]
 ## 4 4 (2-2,2-2) arrange gtable[layout]</code></pre>
-<p>Then we looked at how the PEW questions distributed across idealology.</p>
+<p>Then we looked at how the PEW questions distributed across ideology. We can see that answers for the PEW questions do sometimes differ among ideologies. Specifically people who are very liberal or very conservative have stronger beliefs about PEW1. Now we will try to create a model.</p>
 <pre><code>## 
 ## Call:
 ## glm(formula = ideo ~ . - ideo, family = &quot;binomial&quot;, data = pew2)
@@ -303,14 +258,11 @@ $(document).ready(function () {
 ## AIC: 630.53
 ## 
 ## Number of Fisher Scoring iterations: 5</code></pre>
-<pre><code>##  model.pred.prob 
-##  Min.   :0.3770  
-##  1st Qu.:0.8384  
-##  Median :0.8956  
-##  Mean   :0.8752  
-##  3rd Qu.:0.9323  
-##  Max.   :0.9870</code></pre>
-<p><img src="fake_news_project_files/figure-html/unnamed-chunk-6-1.png" width="672" /><img src="fake_news_project_files/figure-html/unnamed-chunk-6-2.png" width="672" /><img src="fake_news_project_files/figure-html/unnamed-chunk-6-3.png" width="672" /></p>
+<p>After selecting all of the PEW questions and a couple of extra variables we created a logistic model. The dependent variable here is political ideology. We changed the variable from 5 levels to just 2, extreme and moderate. Extreme included people who were very liberal and very conservative. Moderate was everything else.</p>
+<p><img src="fake_news_project_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p>Then looked at how the model was making predictions. It was very accurate at predicting moderates but less accurate at predicting extremes.</p>
+<p><img src="fake_news_project_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p>Next we found a cutoff for the probability that we label the predictions as.</p>
 <pre><code>## Confusion Matrix and Statistics
 ## 
 ##           Reference
@@ -337,34 +289,12 @@ $(document).ready(function () {
 ##                                           
 ##        &#39;Positive&#39; Class : Extreme         
 ## </code></pre>
-<p>We then created a model to see if we could predict how extreme one’s political idealology was based on their answers to these questions and had an 82% accuracy rate.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">levels</span>(pewdata<span class="op">$</span>party)</code></pre></div>
+<p>With all of this we had a model with a 82% accuracy. The specificity is very high, but the sensitivity is very low. This could be because of the low sample size of extreme ideologies. Next we made a model with political party being the dependent variable.</p>
 <pre><code>## [1] &quot;Republican&quot;    &quot;Democrat&quot;      &quot;Independent&quot;   &quot;No preference&quot;
 ## [5] &quot;Other party&quot;</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">levels</span>(pewdata<span class="op">$</span>party) =<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;Republican&quot;</span>,<span class="st">&quot;Democrat&quot;</span> , <span class="ot">NA</span>, <span class="ot">NA</span>,<span class="ot">NA</span>)
-pew2 =<span class="st"> </span>pewdata <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(pew1,pew2,pew3,pew4,pew5a,pew5b,pew5c,pew6,pew7,party,sex,age,educ2) <span class="op">%&gt;%</span><span class="st"> </span>na.omit
-mod1 =<span class="st"> </span><span class="kw">glm</span>(party<span class="op">~</span>.<span class="op">-</span>party,<span class="dt">data=</span>pew2,<span class="dt">family=</span><span class="st">&quot;binomial&quot;</span>)
-
-mod1pp =<span class="st"> </span><span class="kw">predict</span>(mod1,<span class="dt">type =</span> <span class="st">&quot;response&quot;</span>)
-df =<span class="st"> </span><span class="kw">data.frame</span>(mod1pp)
-
-plot.mod1pp &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">prediction =</span> mod1pp, 
-                       <span class="dt">truth =</span> <span class="kw">factor</span>(mod1<span class="op">$</span>y, <span class="dt">labels=</span><span class="kw">c</span>(<span class="st">&quot;Republican&quot;</span>, <span class="st">&quot;Democrat&quot;</span>)))
-
-<span class="kw">ggplot</span>(plot.mod1pp, <span class="kw">aes</span>(<span class="dt">x=</span>truth, <span class="dt">y=</span>prediction, <span class="dt">fill=</span>truth)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_jitter</span>(<span class="dt">width=</span>.<span class="dv">2</span>) <span class="op">+</span><span class="st"> </span><span class="kw">geom_violin</span>(<span class="dt">alpha=</span>.<span class="dv">4</span>) <span class="op">+</span><span class="st"> </span><span class="kw">theme_bw</span>()</code></pre></div>
-<p><img src="fake_news_project_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pr &lt;-<span class="st"> </span><span class="kw">prediction</span>(mod1pp, mod1<span class="op">$</span>y)
-perf &lt;-<span class="st"> </span><span class="kw">performance</span>(pr, <span class="dt">measure=</span><span class="st">&quot;tpr&quot;</span>, <span class="dt">x.measure=</span><span class="st">&quot;fpr&quot;</span>)
-<span class="kw">plot</span>(perf, <span class="dt">colorize=</span><span class="ot">TRUE</span>, <span class="dt">lwd=</span><span class="dv">3</span>, <span class="dt">print.cutoffs.at=</span><span class="kw">c</span>(<span class="kw">seq</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="dt">by=</span><span class="fl">0.1</span>)))
-<span class="kw">abline</span>(<span class="dt">a=</span><span class="dv">0</span>, <span class="dt">b=</span><span class="dv">1</span>, <span class="dt">lty=</span><span class="dv">2</span>)</code></pre></div>
-<p><img src="fake_news_project_files/figure-html/unnamed-chunk-7-2.png" width="672" /></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">perf.f1 &lt;-<span class="st"> </span><span class="kw">performance</span>(pr,<span class="dt">measure=</span><span class="st">&quot;f&quot;</span>)
-<span class="kw">plot</span>(perf.f1)</code></pre></div>
-<p><img src="fake_news_project_files/figure-html/unnamed-chunk-7-3.png" width="672" /></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">plot.mod1pp<span class="op">$</span>pred.class &lt;-<span class="st"> </span><span class="kw">ifelse</span>(plot.mod1pp<span class="op">$</span>prediction <span class="op">&lt;</span>.<span class="dv">49</span>, <span class="dv">0</span>,<span class="dv">1</span>)
-plot.mod1pp<span class="op">$</span>pred.class &lt;-<span class="st"> </span><span class="kw">factor</span>(plot.mod1pp<span class="op">$</span>pred.class, <span class="dt">labels=</span><span class="kw">c</span>(<span class="st">&quot;Republican&quot;</span>, <span class="st">&quot;Democrat&quot;</span>))
-
-<span class="kw">confusionMatrix</span>(plot.mod1pp<span class="op">$</span>pred.class, plot.mod1pp<span class="op">$</span>truth, <span class="dt">positive=</span><span class="st">&quot;Republican&quot;</span>)</code></pre></div>
+<p><img src="fake_news_project_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<p>The graph shows that this model has a more even accuracy for both of the categories.</p>
+<p><img src="fake_news_project_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
 <pre><code>## Confusion Matrix and Statistics
 ## 
 ##             Reference
@@ -391,7 +321,13 @@ plot.mod1pp<span class="op">$</span>pred.class &lt;-<span class="st"> </span><sp
 ##                                           
 ##        &#39;Positive&#39; Class : Republican      
 ## </code></pre>
-<p>We also tried this with political party, but it was less accurate.</p>
+<p>This model had a higher sensitivity, but it was less accurate overall.</p>
+<p>PEW Questions: PEW1: How often do you come across news stories about politics that you think are not totally accurate?<br />
+PEW2: And how often do you come across news stories about politics that you think completely made up?<br />
+PEW3: Have you shared a news story you later found out was made up?<br />
+PEW4: Have you shared a news story you thought at the time was made up?<br />
+PEW5a: How much responsibility do members of the public have in trying to prevent made up stories from gaining public attention? PEW5b: How much responsibility do government and elected officials have in trying to prevent made up stories from gaining public attention? PEW5c: How much responsibility do social media websites have in trying to prevent made up stories from gaining public attention? PEW6: How confident are you in your ability to recognize news that is made up?<br />
+PEW7: How much do you think these kind of stories leave Americans confused about the basic facts of current events?</p>
 </div>
 
 

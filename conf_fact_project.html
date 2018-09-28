@@ -9,7 +9,6 @@
 <meta name="generator" content="pandoc" />
 
 
-<meta name="author" content="Mitch Borgert" />
 
 
 <title>Confirmatory Factor Analysis</title>
@@ -181,16 +180,16 @@ $(document).ready(function () {
 
 
 <h1 class="title toc-ignore">Confirmatory Factor Analysis</h1>
-<h4 class="author"><em>Mitch Borgert</em></h4>
 
 </div>
 
 
+<p>I was given a data set where the researchers had an idea of how the variables would relate. These were nine factors about emotional health and our goal was to see if the variables would be grouped into these nine factors through confirmatory factor analysis. Only a couple were kind of close and the rest were far from it.</p>
 <p>Since our goal was to see how the variables related, I first looked at how a computer would group the variables.</p>
 <div id="data-exploration-for-factor-analysis" class="section level1">
 <h1>Data Exploration for factor analysis</h1>
 <p><img src="conf_fact_project_files/figure-html/unnamed-chunk-2-1.png" width="672" /><img src="conf_fact_project_files/figure-html/unnamed-chunk-2-2.png" width="672" /></p>
-<p>The corrplot has some very small groupings of variables when it is forced to do 9. This may leave us with some lackluster factors that do no fit what is predicted. The scree plot tells us that we could take 2 factors if we followed the elbow rule or about 12 factors if we choose to go for an eigenvalue less than 1. We will still try 9 since that is what is predicted.</p>
+<p>The corrplot has some very small groupings of variables when it is forced to do 9. This may leave us with some lackluster factors that do not fit what is predicted. The scree plot tells us that we could take 2 factors if we followed the elbow rule or about 12 factors if we choose to go for an eigenvalue less than 1. We will still try 9 since that is what is expected. Now we will look at the factor loadings, given that there should be 9 factors.</p>
 </div>
 <div id="factors-and-their-loadings" class="section level1">
 <h1>Factors and their loadings</h1>

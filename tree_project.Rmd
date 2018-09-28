@@ -1,6 +1,5 @@
 ---
 title: "Estimation of Trees on a Random and Nonrandom Plantation"
-author: "Mitch Borgert"
 output: html_document
 ---
 

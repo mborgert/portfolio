@@ -1,6 +1,5 @@
 ---
 title: "Fake News Project"
-author: "Mitch Borgert, Jerry Tucay, Aaron Schaffer"
 output: html_document
 ---
 
@@ -78,7 +77,7 @@ party   <- ggplot(pewdata,aes(x=party, fill = ideo, group = ideo)) +
 party
 ```
 
-Here we looked at political party and political idealology. A few of the responses were odd, with a couple very liberal republicans or very conservative democrats. 
+Here we looked at political party and political ideology. A few of the responses were odd, with a couple very liberal republicans or very conservative democrats. 
 
 ## Pew Responses
   
@@ -100,7 +99,7 @@ Next we made a graph to look at the distribution of answers for the PEW question
 
 ## Pew questions vs Ideology
 
-```{r, fig.align='center', echo = FALSE, out.width =1536, out.height=700,message=FALSE}
+```{r, fig.align='center', echo = FALSE, message = FALSE, warning= FALSE, out.width =1536, out.height=700,message=FALSE}
 
 pew1ideo = pewdata %>% select(pew1,ideo) %>% na.omit()  
 pew1ideotable = data.frame(prop.table(table(pew1ideo),margin=2))
@@ -142,7 +141,7 @@ pewideo = grid.arrange(p11,p21,p61,p71)
 pewideo
 ```
 
-Then we looked at how the PEW questions distributed across idealology. 
+Then we looked at how the PEW questions distributed across ideology. We can see that answers for the PEW questions do sometimes differ among ideologies. Specifically people who are very liberal or very conservative have stronger beliefs about PEW1. Now we will try to create a model.
 
 ```{r, echo=FALSE, message = FALSE, warning = FALSE}
 levels(pewdata$ideo) = c("Extreme","Moderate" , "Moderate", "Moderate","Extreme")
@@ -150,22 +149,33 @@ pew2 <- pewdata %>% select(pew1,pew2,pew3,pew4,pew5a,pew5b,pew5c,pew6,pew7,ideo,
 
 mod1 <- glm(ideo~.-ideo,data=pew2,family="binomial")
 summary(mod1)
+```
+
+After selecting all of the PEW questions and a couple of extra variables we created a logistic model. The dependent variable here is political ideology. We changed the variable from 5 levels to just 2, extreme and moderate. Extreme included people who were very liberal and very conservative. Moderate was everything else. 
+
+```{r, echo=FALSE, message = FALSE, warning = FALSE}
 model.pred.prob <- predict(mod1, type='response')
 df = data.frame(model.pred.prob)
-summary(df)
 plot.mpp <- data.frame(prediction = model.pred.prob, 
                        truth = factor(mod1$y, labels=c("Extreme", "Moderate")))
 
 ggplot(plot.mpp, aes(x=truth, y=prediction, fill=truth)) + 
       geom_jitter(width=.2) + geom_violin(alpha=.4) + theme_bw() + geom_hline(yintercept=.79)
+```
 
+Then looked at how the model was making predictions. It was very accurate at predicting moderates but less accurate at predicting extremes. 
+
+```{r, echo=FALSE, message = FALSE, warning = FALSE}
 pr <- prediction(model.pred.prob, mod1$y)
 perf <- performance(pr, measure="tpr", x.measure="fpr")
-plot(perf, colorize=TRUE, lwd=3, print.cutoffs.at=c(seq(0,1,by=0.1)))
-abline(a=0, b=1, lty=2)
+
 perf.f1 <- performance(pr,measure="f")
 plot(perf.f1)
+```
 
+Next we found a cutoff for the probability that we label the predictions as. 
+
+```{r, echo=FALSE, message = FALSE, warning = FALSE}
 plot.mpp$pred.class <- ifelse(plot.mpp$prediction <.79, 0,1)
 
 plot.mpp$pred.class <- factor(plot.mpp$pred.class, labels=c("Extreme", "Moderate"))
@@ -174,9 +184,9 @@ plot.mpp$pred.class <- factor(plot.mpp$pred.class, labels=c("Extreme", "Moderate
 confusionMatrix(plot.mpp$pred.class, plot.mpp$truth, positive="Extreme")
 ```
 
-We then created a model to see if we could predict how extreme one's political idealology was based on their answers to these questions and had an 82% accuracy rate. 
+With all of this we had a model with a 82% accuracy. The specificity is very high, but the sensitivity is very low. This could be because of the low sample size of extreme ideologies. Next we made a model with political party being the dependent variable. 
 
-```{r}
+```{r, echo=FALSE, message = FALSE, warning = FALSE}
 levels(pewdata$party)
 levels(pewdata$party) = c("Republican","Democrat" , NA, NA,NA)
 pew2 = pewdata %>% select(pew1,pew2,pew3,pew4,pew5a,pew5b,pew5c,pew6,pew7,party,sex,age,educ2) %>% na.omit
@@ -189,13 +199,13 @@ plot.mod1pp <- data.frame(prediction = mod1pp,
                        truth = factor(mod1$y, labels=c("Republican", "Democrat")))
 
 ggplot(plot.mod1pp, aes(x=truth, y=prediction, fill=truth)) + geom_jitter(width=.2) + geom_violin(alpha=.4) + theme_bw()
+```
 
+The graph shows that this model has a more even accuracy for both of the categories. 
 
-
+```{r, echo=FALSE, message = FALSE, warning = FALSE}
 pr <- prediction(mod1pp, mod1$y)
 perf <- performance(pr, measure="tpr", x.measure="fpr")
-plot(perf, colorize=TRUE, lwd=3, print.cutoffs.at=c(seq(0,1,by=0.1)))
-abline(a=0, b=1, lty=2)
 perf.f1 <- performance(pr,measure="f")
 plot(perf.f1)
 
@@ -206,4 +216,18 @@ confusionMatrix(plot.mod1pp$pred.class, plot.mod1pp$truth, positive="Republican"
 
 ```
 
-We also tried this with political party, but it was less accurate.
+This model had a higher sensitivity, but it was less accurate overall. 
+
+  
+PEW Questions: 
+PEW1: How often do you come across news stories about politics that you think are not totally accurate?  
+PEW2: And how often do you come across news stories about politics that you think completely made up?  
+PEW3: Have you shared a news story you later found out was made up?  
+PEW4: Have you shared a news story you thought at the time was made up?  
+PEW5a: How much responsibility do members of the public have in trying to prevent made up stories from gaining public attention? 
+PEW5b: How much responsibility do government and elected officials have in trying to prevent made up stories from gaining public attention? 
+PEW5c: How much responsibility do social media websites have in trying to prevent made up stories from gaining public attention? 
+PEW6: How confident are you in your ability to recognize news that is made up?  
+PEW7: How much do you think these kind of stories leave Americans confused about the basic facts of current events?  
+
+

@@ -1,6 +1,5 @@
 ---
 title: "Confirmatory Factor Analysis"
-author: "Mitch Borgert"
 output: html_document
 ---
 
@@ -62,6 +61,8 @@ parHiv$PB25[x == 3] <- 2
 parHiv$PB25[x == 4] <- 1
 ```
 
+I was given a data set where the researchers had an idea of how the variables would relate. These were nine factors about emotional health and our goal was to see if the variables would be grouped into these nine factors through confirmatory factor analysis. Only a couple were kind of close and the rest were far from it.
+  
 Since our goal was to see how the variables related, I first looked at how a computer would group the variables.
 
 #Data Exploration for factor analysis
@@ -82,7 +83,7 @@ qplot(x=1:length(var_pc), y=var_pc, geom=c("point", "line")) +
 
 ```
 
-The corrplot has some very small groupings of variables when it is forced to do 9. This may leave us with some lackluster factors that do no fit what is predicted. The scree plot tells us that we could take 2 factors if we followed the elbow rule or about 12 factors if we choose to go for an eigenvalue less than 1. We will still try 9 since that is what is predicted. 
+The corrplot has some very small groupings of variables when it is forced to do 9. This may leave us with some lackluster factors that do not fit what is predicted. The scree plot tells us that we could take 2 factors if we followed the elbow rule or about 12 factors if we choose to go for an eigenvalue less than 1. We will still try 9 since that is what is expected. Now we will look at the factor loadings, given that there should be 9 factors. 
 
 #Factors and their loadings
 
@@ -111,8 +112,6 @@ names(scores) = c("BSI_obsessive","BSI_anxiety","BSI_interpersonal_sensitivity",
 
 parHivScores = data.frame(parHiv,scores)
 ```
-
-
 
 
 ```{r,include = FALSE, echo=FALSE,message=FALSE,warning=FALSE,error=FALSE}
@@ -199,6 +198,8 @@ pander(summary(model2))
 AIC(model2)
 ```
 
+
+  
 Model 1 has a adjusted R^2 of .111 and a AIC of 361.1. Model 2 has an adjusted R^2 of .075 and an AIC of 373.02. Model 1 is a better model. For the final model we will add the effective variables in model 2 to model 1. 
 
 ```{r,echo=FALSE,message=FALSE,warning=FALSE,error=FALSE}
