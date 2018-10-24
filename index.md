@@ -2,7 +2,7 @@
 
 # What is this
 
-####This is my portfolio. All of my school work was just sitting on my computer not benefitting me at all so I figured that I should put it to use. Hopefully this is a good way to show what I know how to do. Without further ado, here it is from newest to oldest: 
+####This is my portfolio. It has most of my school work and other work from newest to oldest: 
 
 ---
 
