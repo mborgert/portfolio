@@ -3,17 +3,16 @@ title: "My Webscraping Adventure"
 author: "Mitch Borgert"
 output: html_document
 ---
-```{r, message = FALSE, warning = FALSE}
+
+
+Each of these code chunks takes the data from a page on the website and splits it up into 3 columns split by the first 3 spaces. There were five pages.
+
+```{r}
 library(rvest)
 library(stringr)
 library(lubridate)
 library(pander)
 
-```
-
-Each of these code chunks takes the data from a page on the website and splits it up into 3 columns split by the frist 3 spaces.
-
-```{r}
 events = read_html("https://www.onthisday.com/events/date/2017")
 
 rank_data_html <- html_nodes(events,'.mc-closeModal , .event-list__item')
@@ -29,7 +28,10 @@ for(i in 1:161){
   df1[i,2] = splits[[1]][2]
   df1[i,3] = str_flatten(splits[[1]][3:length(splits[[1]])], " ")
 }
+```
 
+And here is what it looks like:
+```{r}
 pander(head(df1))
 ```
 
@@ -136,7 +138,7 @@ events = events[-c(1:91),]
 
 ```
 
-And here is a peak at all its glory.
+And here is a peak at the complete csv.
 ```{r, message = FALSE, warning = FALSE}
 pander(head(events))
 ```

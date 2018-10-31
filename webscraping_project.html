@@ -229,12 +229,15 @@ $(document).ready(function () {
 </div>
 
 
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(rvest)
-<span class="kw">library</span>(stringr)
-<span class="kw">library</span>(lubridate)
-<span class="kw">library</span>(pander)</code></pre></div>
-<p>Each of these code chunks takes the data from a page on the website and splits it up into 3 columns split by the frist 3 spaces.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">events =<span class="st"> </span><span class="kw">read_html</span>(<span class="st">&quot;https://www.onthisday.com/events/date/2017&quot;</span>)
+<p>Each of these code chunks takes the data from a page on the website and splits it up into 3 columns split by the first 3 spaces. There were five pages.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(rvest)</code></pre></div>
+<pre><code>## Loading required package: xml2</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(stringr)</code></pre></div>
+<pre><code>## Warning: package &#39;stringr&#39; was built under R version 3.4.4</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(lubridate)
+<span class="kw">library</span>(pander)
+
+events =<span class="st"> </span><span class="kw">read_html</span>(<span class="st">&quot;https://www.onthisday.com/events/date/2017&quot;</span>)
 
 rank_data_html &lt;-<span class="st"> </span><span class="kw">html_nodes</span>(events,<span class="st">&#39;.mc-closeModal , .event-list__item&#39;</span>)
 
@@ -248,9 +251,9 @@ df1 =<span class="st"> </span><span class="kw">data.frame</span>(<span class="kw
   df1[i,<span class="dv">1</span>] =<span class="st"> </span>splits[[<span class="dv">1</span>]][<span class="dv">1</span>]
   df1[i,<span class="dv">2</span>] =<span class="st"> </span>splits[[<span class="dv">1</span>]][<span class="dv">2</span>]
   df1[i,<span class="dv">3</span>] =<span class="st"> </span><span class="kw">str_flatten</span>(splits[[<span class="dv">1</span>]][<span class="dv">3</span><span class="op">:</span><span class="kw">length</span>(splits[[<span class="dv">1</span>]])], <span class="st">&quot; &quot;</span>)
-}
-
-<span class="kw">pander</span>(<span class="kw">head</span>(df1))</code></pre></div>
+}</code></pre></div>
+<p>And here is what it looks like:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">pander</span>(<span class="kw">head</span>(df1))</code></pre></div>
 <table style="width:60%;">
 <colgroup>
 <col width="8%" />
@@ -383,7 +386,7 @@ events<span class="op">$</span>date =<span class="st"> </span><span class="kw">a
 events =<span class="st"> </span>events[<span class="kw">c</span>(<span class="st">&quot;date&quot;</span>, <span class="st">&quot;event&quot;</span>)]
 
 events =<span class="st"> </span>events[<span class="op">-</span><span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">91</span>),]</code></pre></div>
-<p>And here is a peak at all its glory.</p>
+<p>And here is a peak at the complete csv.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">pander</span>(<span class="kw">head</span>(events))</code></pre></div>
 <table style="width:75%;">
 <colgroup>

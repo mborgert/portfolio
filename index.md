@@ -2,7 +2,7 @@
 
 # What is this
 
-####This is my portfolio. It has most of my school work and other work from newest to oldest: 
+####This is my portfolio. It has most of my school work and other work: 
 
 ---
 
