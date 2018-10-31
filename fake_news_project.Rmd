@@ -153,7 +153,7 @@ perf <- performance(pr, measure="tpr", x.measure="fpr")
 perf.f1 <- performance(pr,measure="f")
 plot(perf.f1)
 ```
-With a glm we need to find a cutoff point for what group a probability goes into. This plot lets us get a good idea. The cutoff should be around when the line starts to drop off. I'm choosing .79 
+With a glm we need to find a cutoff point for what group a probability goes into. This plot lets us get a good idea. The cutoff should be around when the line starts to drop off. I'm choosing .85. So, in this model a true positive for extreme will be less than .85 and a true negative for moderate will be greater than .85.
 
 ```{r, echo=FALSE, message = FALSE, warning = FALSE}
 
@@ -162,14 +162,14 @@ plot.mpp <- data.frame(prediction = model.pred.prob,
                        truth = factor(mod1$y, labels=c("Extreme", "Moderate")))
 
 ggplot(plot.mpp, aes(x=truth, y=prediction, fill=truth)) + 
-      geom_jitter(width=.2) + geom_violin(alpha=.4) + theme_bw() + geom_hline(yintercept=.79)
+      geom_jitter(width=.2) + geom_violin(alpha=.4) + theme_bw() + geom_hline(yintercept=.85)
 ```
 
-This plot shows how accurate the predictions were. If a dot is above out cutoff line at .79, then it was predicted accurately. We see that ot got most of the moderates right but it looks like not much more than half of the extremes were correct. We can look at this accuracy mathematically. 
+This plot shows that we chose a good cutoff. For the moderates, most of them are above the line. If the line was any higher we would predict too many moderates falsely. 
 
 
 ```{r, echo=FALSE, message = FALSE, warning = FALSE}
-plot.mpp$pred.class <- ifelse(plot.mpp$prediction <.79, 0,1)
+plot.mpp$pred.class <- ifelse(plot.mpp$prediction <.85, 0,1)
 
 plot.mpp$pred.class <- factor(plot.mpp$pred.class, labels=c("Extreme", "Moderate"))
 
@@ -177,7 +177,7 @@ plot.mpp$pred.class <- factor(plot.mpp$pred.class, labels=c("Extreme", "Moderate
 confusionMatrix(plot.mpp$pred.class, plot.mpp$truth, positive="Extreme")
 ```
 
-Our model had a 82% accuracy rate. The specificity (true negative rate) is very high, but the sensitivity ( true positive rate) is very low. In this model a positive was extreme and a negative was moderate. This could be because of the low sample size of extreme ideologies. Next we made a model with political party being the dependent variable. 
+Our model had a 71% accuracy rate. The specificity (true negative rate) is ok at 74% and the sensitivity (true positive rate) is average at 53%. This could be because of the low sample size of extreme ideologies. Next we made a model with political party being the dependent variable. 
 
 ```{r, echo=FALSE, message = FALSE, warning = FALSE}
 levels(pewdata$party)
@@ -212,7 +212,7 @@ confusionMatrix(plot.mod1pp$pred.class, plot.mod1pp$truth, positive="Republican"
 
 ```
 
-This model had a higher sensitivity than the previous onebut it had a lower specificity. The overall accuracy was also lower.
+This model had a higher sensitivity than the previous one but it had a lower specificity. The overall accuracy was also lower.
 
 Overall these models showed that accurate predictions should be possible with better data. I think with a higher sample size and more specific questions political ideology can be predicted with fake news opinions. 
 
