@@ -54,7 +54,20 @@ library(ResourceSelection)
 library(knitr)
 ```
 
-Our goal for this project was to look at how different political parties viewed fakes news. Our data set was from the PEW Research center and it contained question such as "How well do you think you can determine a fake news story". These type of questions are the PEW questions and are at the end of this page. First we looked at how the variables were distributed.  
+Our goal for this project was to look at how different political parties viewed fakes news. Our data set was from the PEW Research center and it contained question such as "How well do you think you can determine a fake news story". These type of questions are the PEW questions which are:   
+     
+PEW1: How often do you come across news stories about politics that you think are not totally accurate?  
+PEW2: And how often do you come across news stories about politics that you think completely made up?  
+PEW3: Have you shared a news story you later found out was made up?  
+PEW4: Have you shared a news story you thought at the time was made up?  
+PEW5a: How much responsibility do members of the public have in trying to prevent made up stories from gaining public attention? 
+PEW5b: How much responsibility do government and elected officials have in trying to prevent made up stories from gaining public attention? 
+PEW5c: How much responsibility do social media websites have in trying to prevent made up stories from gaining public attention? 
+PEW6: How confident are you in your ability to recognize news that is made up?  
+PEW7: How much do you think these kind of stories leave Americans confused about the basic facts of current events?  
+ 
+
+First we looked at how the political variables were distributed.  
 
 ## Political Affiliations of Population
 
@@ -79,27 +92,9 @@ party
 
 Here we looked at political party and political ideology. A few of the responses were odd, with a couple very liberal republicans or very conservative democrats. 
 
-## Pew Responses
-  
-```{r, fig.align='center', echo=FALSE, message = FALSE, warning = FALSE, out.width =1536, out.height=800}
-library(reshape2)
-
-x <- pewdata[,c('pew1','pew2','pew5a','pew5b','pew5c','pew6','pew7')] %>% sapply(summary)
-pew.df <- data.frame(x) %>% as.matrix %>% melt()
-ggplot(aes(x = Var2, y = value, fill = Var1, label = value), data = pew.df) +
-  theme_classic() +
-  geom_bar(stat = "identity") +
-  geom_text(position = position_stack(vjust = 0.5), size = 3) + 
-  xlab("Pew Question") +
-  scale_fill_brewer(palette='Paired', name = "Response")
-
-```
-
-Next we made a graph to look at the distribution of answers for the PEW questions. 
-
 ## Pew questions vs Ideology
 
-```{r, fig.align='center', echo = FALSE, message = FALSE, warning= FALSE, out.width =1536, out.height=700,message=FALSE}
+```{r, fig.align='center', echo = FALSE, message = FALSE, warning= FALSE,message=FALSE}
 
 pew1ideo = pewdata %>% select(pew1,ideo) %>% na.omit()  
 pew1ideotable = data.frame(prop.table(table(pew1ideo),margin=2))
@@ -107,8 +102,7 @@ p11= ggplot(pew1ideotable, aes(x=pew1,y=Freq,fill = ideo)) + geom_bar(position =
   geom_text(stat = 'count', position=position_dodge(width = 1),
             aes(y = ..count..,  label = ..count.., vjust = 0)) +
   theme_classic() +
-  theme(axis.text.x = element_text(angle = 30, hjust = 1),
-        legend.position = c(.9,.7))
+  theme(axis.text.x = element_text(angle = 30, hjust = 1), legend.position = c(0.8, 0.7), legend.key.size = unit(.3,"line")) 
 
 pew2ideo = pewdata %>% select(pew2,ideo) %>% na.omit()  
 pew2ideotable = data.frame(prop.table(table(pew2ideo),margin=2))
@@ -116,8 +110,7 @@ p21 = ggplot(pew2ideotable, aes(x=pew2,y=Freq,fill = ideo)) + geom_bar(position 
   geom_text(stat = 'count', position=position_dodge(width = 1),
             aes(y = ..count..,  label = ..count.., vjust = 0)) +
   theme_classic() +
-  theme(axis.text.x = element_text(angle = 30, hjust = 1),
-        legend.position = c(.9,.7))
+  theme(axis.text.x = element_text(angle = 30, hjust = 1), legend.position = c(0.8, 0.7), legend.key.size = unit(.3,"line"))
 
 pew6ideo = pewdata %>% select(pew6,ideo) %>% na.omit()  
 pew6ideotable = data.frame(prop.table(table(pew6ideo),margin=2))
@@ -125,8 +118,8 @@ p61 = ggplot(pew6ideotable, aes(x=pew6,y=Freq,fill = ideo)) + geom_bar(position 
   geom_text(stat = 'count', position=position_dodge(width = 1),
             aes(y = ..count..,  label = ..count.., vjust = 0)) +
   theme_classic() +
-  theme(axis.text.x = element_text(angle = 30, hjust = 1),
-        legend.position = c(.9,.7))
+  theme(axis.text.x = element_text(angle = 30, hjust = 1), legend.position = c(0.8, 0.7), legend.key.size = unit(.3,"line"))
+       
 
 pew7ideo = pewdata %>% select(pew7,ideo) %>% na.omit()  
 pew7ideotable = data.frame(prop.table(table(pew7ideo),margin=2))
@@ -134,14 +127,13 @@ p71 = ggplot(pew7ideotable, aes(x=pew7,y=Freq,fill = ideo)) + geom_bar(position 
   geom_text(stat = 'count', position=position_dodge(width = 1),
             aes(y = ..count..,  label = ..count.., vjust = 0)) +
   theme_classic() +
-  theme(axis.text.x = element_text(angle = 30, hjust = 1),
-        legend.position = c(.9,.7))
+  theme(axis.text.x = element_text(angle = 30, hjust = 1), legend.position = c(0.8, 0.7), legend.key.size = unit(.3,"line"))
 
 pewideo = grid.arrange(p11,p21,p61,p71) 
 pewideo
 ```
 
-Then we looked at how the PEW questions distributed across ideology. We can see that answers for the PEW questions do sometimes differ among ideologies. Specifically people who are very liberal or very conservative have stronger beliefs about PEW1. Now we will try to create a model.
+Then we looked at how the PEW questions distributed across ideology. We can see that answers for the PEW questions do sometimes differ among ideologies. Specifically people who are very liberal or very conservative have stronger beliefs about PEW6. Now we will try to create a model.
 
 ```{r, echo=FALSE, message = FALSE, warning = FALSE}
 levels(pewdata$ideo) = c("Extreme","Moderate" , "Moderate", "Moderate","Extreme")
@@ -155,6 +147,16 @@ After selecting all of the PEW questions and a couple of extra variables we crea
 
 ```{r, echo=FALSE, message = FALSE, warning = FALSE}
 model.pred.prob <- predict(mod1, type='response')
+pr <- prediction(model.pred.prob, mod1$y)
+perf <- performance(pr, measure="tpr", x.measure="fpr")
+
+perf.f1 <- performance(pr,measure="f")
+plot(perf.f1)
+```
+With a glm we need to find a cutoff point for what group a probability goes into. This plot lets us get a good idea. The cutoff should be around when the line starts to drop off. I'm choosing .79 
+
+```{r, echo=FALSE, message = FALSE, warning = FALSE}
+
 df = data.frame(model.pred.prob)
 plot.mpp <- data.frame(prediction = model.pred.prob, 
                        truth = factor(mod1$y, labels=c("Extreme", "Moderate")))
@@ -163,17 +165,8 @@ ggplot(plot.mpp, aes(x=truth, y=prediction, fill=truth)) +
       geom_jitter(width=.2) + geom_violin(alpha=.4) + theme_bw() + geom_hline(yintercept=.79)
 ```
 
-Then looked at how the model was making predictions. It was very accurate at predicting moderates but less accurate at predicting extremes. 
+This plot shows how accurate the predictions were. If a dot is above out cutoff line at .79, then it was predicted accurately. We see that ot got most of the moderates right but it looks like not much more than half of the extremes were correct. We can look at this accuracy mathematically. 
 
-```{r, echo=FALSE, message = FALSE, warning = FALSE}
-pr <- prediction(model.pred.prob, mod1$y)
-perf <- performance(pr, measure="tpr", x.measure="fpr")
-
-perf.f1 <- performance(pr,measure="f")
-plot(perf.f1)
-```
-
-Next we found a cutoff for the probability that we label the predictions as. 
 
 ```{r, echo=FALSE, message = FALSE, warning = FALSE}
 plot.mpp$pred.class <- ifelse(plot.mpp$prediction <.79, 0,1)
@@ -184,31 +177,34 @@ plot.mpp$pred.class <- factor(plot.mpp$pred.class, labels=c("Extreme", "Moderate
 confusionMatrix(plot.mpp$pred.class, plot.mpp$truth, positive="Extreme")
 ```
 
-With all of this we had a model with a 82% accuracy. The specificity is very high, but the sensitivity is very low. This could be because of the low sample size of extreme ideologies. Next we made a model with political party being the dependent variable. 
+Our model had a 82% accuracy rate. The specificity (true negative rate) is very high, but the sensitivity ( true positive rate) is very low. In this model a positive was extreme and a negative was moderate. This could be because of the low sample size of extreme ideologies. Next we made a model with political party being the dependent variable. 
 
 ```{r, echo=FALSE, message = FALSE, warning = FALSE}
 levels(pewdata$party)
 levels(pewdata$party) = c("Republican","Democrat" , NA, NA,NA)
 pew2 = pewdata %>% select(pew1,pew2,pew3,pew4,pew5a,pew5b,pew5c,pew6,pew7,party,sex,age,educ2) %>% na.omit
 mod1 = glm(party~.-party,data=pew2,family="binomial")
-
 mod1pp = predict(mod1,type = "response")
 df = data.frame(mod1pp)
 
-plot.mod1pp <- data.frame(prediction = mod1pp, 
-                       truth = factor(mod1$y, labels=c("Republican", "Democrat")))
-
-ggplot(plot.mod1pp, aes(x=truth, y=prediction, fill=truth)) + geom_jitter(width=.2) + geom_violin(alpha=.4) + theme_bw()
-```
-
-The graph shows that this model has a more even accuracy for both of the categories. 
-
-```{r, echo=FALSE, message = FALSE, warning = FALSE}
 pr <- prediction(mod1pp, mod1$y)
 perf <- performance(pr, measure="tpr", x.measure="fpr")
 perf.f1 <- performance(pr,measure="f")
 plot(perf.f1)
+```
 
+This time our cutoff will be .49. 
+
+```{r, echo=FALSE, message = FALSE, warning = FALSE}
+plot.mod1pp <- data.frame(prediction = mod1pp, 
+                       truth = factor(mod1$y, labels=c("Republican", "Democrat")))
+
+ggplot(plot.mod1pp, aes(x=truth, y=prediction, fill=truth)) + geom_jitter(width=.2) + geom_violin(alpha=.4) + theme_bw() + geom_hline(yintercept=.49)
+```
+
+This time republican is a positive and democrat is a negative. Again, we should have a higher specificity than sensitivity.  
+
+```{r, echo=FALSE, message = FALSE, warning = FALSE}
 plot.mod1pp$pred.class <- ifelse(plot.mod1pp$prediction <.49, 0,1)
 plot.mod1pp$pred.class <- factor(plot.mod1pp$pred.class, labels=c("Republican", "Democrat"))
 
@@ -216,18 +212,8 @@ confusionMatrix(plot.mod1pp$pred.class, plot.mod1pp$truth, positive="Republican"
 
 ```
 
-This model had a higher sensitivity, but it was less accurate overall. 
+This model had a higher sensitivity than the previous onebut it had a lower specificity. The overall accuracy was also lower.
 
-  
-PEW Questions: 
-PEW1: How often do you come across news stories about politics that you think are not totally accurate?  
-PEW2: And how often do you come across news stories about politics that you think completely made up?  
-PEW3: Have you shared a news story you later found out was made up?  
-PEW4: Have you shared a news story you thought at the time was made up?  
-PEW5a: How much responsibility do members of the public have in trying to prevent made up stories from gaining public attention? 
-PEW5b: How much responsibility do government and elected officials have in trying to prevent made up stories from gaining public attention? 
-PEW5c: How much responsibility do social media websites have in trying to prevent made up stories from gaining public attention? 
-PEW6: How confident are you in your ability to recognize news that is made up?  
-PEW7: How much do you think these kind of stories leave Americans confused about the basic facts of current events?  
+Overall these models showed that accurate predictions should be possible with better data. I think with a higher sample size and more specific questions political ideology can be predicted with fake news opinions. 
 
 

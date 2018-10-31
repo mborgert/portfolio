@@ -184,27 +184,29 @@ $(document).ready(function () {
 </div>
 
 
-<p>Our goal for this project was to look at how different political parties viewed fakes news. Our data set was from the PEW Research center and it contained question such as “How well do you think you can determine a fake news story”. These type of questions are the PEW questions and are at the end of this page. First we looked at how the variables were distributed.</p>
+<p>Our goal for this project was to look at how different political parties viewed fakes news. Our data set was from the PEW Research center and it contained question such as “How well do you think you can determine a fake news story”. These type of questions are the PEW questions which are:</p>
+<p>PEW1: How often do you come across news stories about politics that you think are not totally accurate?<br />
+PEW2: And how often do you come across news stories about politics that you think completely made up?<br />
+PEW3: Have you shared a news story you later found out was made up?<br />
+PEW4: Have you shared a news story you thought at the time was made up?<br />
+PEW5a: How much responsibility do members of the public have in trying to prevent made up stories from gaining public attention? PEW5b: How much responsibility do government and elected officials have in trying to prevent made up stories from gaining public attention? PEW5c: How much responsibility do social media websites have in trying to prevent made up stories from gaining public attention? PEW6: How confident are you in your ability to recognize news that is made up?<br />
+PEW7: How much do you think these kind of stories leave Americans confused about the basic facts of current events?</p>
+<p>First we looked at how the political variables were distributed.</p>
 <div id="political-affiliations-of-population" class="section level2">
 <h2>Political Affiliations of Population</h2>
 <p><img src="fake_news_project_files/figure-html/unnamed-chunk-3-1.png" width="1536" height="800" style="display: block; margin: auto;" /></p>
 <p>Here we looked at political party and political ideology. A few of the responses were odd, with a couple very liberal republicans or very conservative democrats.</p>
 </div>
-<div id="pew-responses" class="section level2">
-<h2>Pew Responses</h2>
-<p><img src="fake_news_project_files/figure-html/unnamed-chunk-4-1.png" width="1536" height="800" style="display: block; margin: auto;" /></p>
-<p>Next we made a graph to look at the distribution of answers for the PEW questions.</p>
-</div>
 <div id="pew-questions-vs-ideology" class="section level2">
 <h2>Pew questions vs Ideology</h2>
-<p><img src="fake_news_project_files/figure-html/unnamed-chunk-5-1.png" width="1536" height="700" style="display: block; margin: auto;" /></p>
+<p><img src="fake_news_project_files/figure-html/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
 <pre><code>## TableGrob (2 x 2) &quot;arrange&quot;: 4 grobs
 ##   z     cells    name           grob
 ## 1 1 (1-1,1-1) arrange gtable[layout]
 ## 2 2 (1-1,2-2) arrange gtable[layout]
 ## 3 3 (2-2,1-1) arrange gtable[layout]
 ## 4 4 (2-2,2-2) arrange gtable[layout]</code></pre>
-<p>Then we looked at how the PEW questions distributed across ideology. We can see that answers for the PEW questions do sometimes differ among ideologies. Specifically people who are very liberal or very conservative have stronger beliefs about PEW1. Now we will try to create a model.</p>
+<p>Then we looked at how the PEW questions distributed across ideology. We can see that answers for the PEW questions do sometimes differ among ideologies. Specifically people who are very liberal or very conservative have stronger beliefs about PEW6. Now we will try to create a model.</p>
 <pre><code>## 
 ## Call:
 ## glm(formula = ideo ~ . - ideo, family = &quot;binomial&quot;, data = pew2)
@@ -259,10 +261,9 @@ $(document).ready(function () {
 ## 
 ## Number of Fisher Scoring iterations: 5</code></pre>
 <p>After selecting all of the PEW questions and a couple of extra variables we created a logistic model. The dependent variable here is political ideology. We changed the variable from 5 levels to just 2, extreme and moderate. Extreme included people who were very liberal and very conservative. Moderate was everything else.</p>
+<p><img src="fake_news_project_files/figure-html/unnamed-chunk-6-1.png" width="672" /> With a glm we need to find a cutoff point for what group a probability goes into. This plot lets us get a good idea. The cutoff should be around when the line starts to drop off. I’m choosing .79</p>
 <p><img src="fake_news_project_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
-<p>Then looked at how the model was making predictions. It was very accurate at predicting moderates but less accurate at predicting extremes.</p>
-<p><img src="fake_news_project_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
-<p>Next we found a cutoff for the probability that we label the predictions as.</p>
+<p>This plot shows how accurate the predictions were. If a dot is above out cutoff line at .79, then it was predicted accurately. We see that ot got most of the moderates right but it looks like not much more than half of the extremes were correct. We can look at this accuracy mathematically.</p>
 <pre><code>## Confusion Matrix and Statistics
 ## 
 ##           Reference
@@ -289,12 +290,13 @@ $(document).ready(function () {
 ##                                           
 ##        &#39;Positive&#39; Class : Extreme         
 ## </code></pre>
-<p>With all of this we had a model with a 82% accuracy. The specificity is very high, but the sensitivity is very low. This could be because of the low sample size of extreme ideologies. Next we made a model with political party being the dependent variable.</p>
+<p>Our model had a 82% accuracy rate. The specificity (true negative rate) is very high, but the sensitivity ( true positive rate) is very low. In this model a positive was extreme and a negative was moderate. This could be because of the low sample size of extreme ideologies. Next we made a model with political party being the dependent variable.</p>
 <pre><code>## [1] &quot;Republican&quot;    &quot;Democrat&quot;      &quot;Independent&quot;   &quot;No preference&quot;
 ## [5] &quot;Other party&quot;</code></pre>
+<p><img src="fake_news_project_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<p>This time our cutoff will be .49.</p>
 <p><img src="fake_news_project_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
-<p>The graph shows that this model has a more even accuracy for both of the categories.</p>
-<p><img src="fake_news_project_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<p>This time republican is a positive and democrat is a negative. Again, we should have a higher specificity than sensitivity.</p>
 <pre><code>## Confusion Matrix and Statistics
 ## 
 ##             Reference
@@ -321,13 +323,8 @@ $(document).ready(function () {
 ##                                           
 ##        &#39;Positive&#39; Class : Republican      
 ## </code></pre>
-<p>This model had a higher sensitivity, but it was less accurate overall.</p>
-<p>PEW Questions: PEW1: How often do you come across news stories about politics that you think are not totally accurate?<br />
-PEW2: And how often do you come across news stories about politics that you think completely made up?<br />
-PEW3: Have you shared a news story you later found out was made up?<br />
-PEW4: Have you shared a news story you thought at the time was made up?<br />
-PEW5a: How much responsibility do members of the public have in trying to prevent made up stories from gaining public attention? PEW5b: How much responsibility do government and elected officials have in trying to prevent made up stories from gaining public attention? PEW5c: How much responsibility do social media websites have in trying to prevent made up stories from gaining public attention? PEW6: How confident are you in your ability to recognize news that is made up?<br />
-PEW7: How much do you think these kind of stories leave Americans confused about the basic facts of current events?</p>
+<p>This model had a higher sensitivity than the previous onebut it had a lower specificity. The overall accuracy was also lower.</p>
+<p>Overall these models showed that accurate predictions should be possible with better data. I think with a higher sample size and more specific questions political ideology can be predicted with fake news opinions.</p>
 </div>
 
 
