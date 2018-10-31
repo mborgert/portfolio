@@ -229,8 +229,7 @@ $(document).ready(function () {
 </div>
 
 
-<div id="the-data" class="section level2">
-<h2>The data:</h2>
+<p>Here is a look at the data. This data created from two data sets from 538. Appr is the presidents approval rating, samplesize is the sample size of each poll, enddate is when the poll was finished, and dem and rep are what percent of people want to vote for each party. I’ve made the demwin variable since I want to see the chance that the democrats would have a majority. This variable was just dem - rep to see the difference in support.</p>
 <table style="width:78%;">
 <colgroup>
 <col width="11%" />
@@ -301,52 +300,55 @@ $(document).ready(function () {
 </tr>
 </tbody>
 </table>
-<div id="this-data-created-from-two-datasets-from-538.-appr-is-the-presidents-approval-rating-samplesize-is-the-sample-size-of-each-poll-enddate-is-when-the-poll-was-finished-and-dem-and-rep-are-what-percent-of-people-want-to-vote-for-each-party.-i-created-the-demwin-variable-since-i-was-prediction-the-chance-the-democrats-would-have-a-majority.-this-variable-was-just-dem---rep-to-see-the-difference-in-support." class="section level3">
-<h3>This data created from two datasets from 538. Appr is the presidents approval rating, samplesize is the sample size of each poll, enddate is when the poll was finished, and dem and rep are what percent of people want to vote for each party. I created the demwin variable since I was prediction the chance the democrats would have a majority. This variable was just dem - rep to see the difference in support.</h3>
-</div>
-</div>
-<div id="predictions-using-a-linear-model" class="section level2">
-<h2>Predictions using a linear model:</h2>
+<div id="predictions-using-a-linear-model" class="section level1">
+<h1>Predictions using a linear model:</h1>
+<p>We want to see if a linear model can predict demwin givern our variables.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mod1 =<span class="st"> </span><span class="kw">lm</span>(demwin <span class="op">~</span><span class="st"> </span>appr <span class="op">+</span><span class="st"> </span>samplesize <span class="op">+</span><span class="st"> </span>enddate,<span class="dt">data =</span> mid_appr)
+
+x =<span class="st"> </span><span class="kw">ymd</span>(<span class="st">&quot;2018-04-19&quot;</span>)
+enddate =<span class="st"> </span><span class="kw">rep</span>(x,<span class="dv">21</span>)
+appr =<span class="st"> </span><span class="dv">30</span><span class="op">:</span><span class="dv">50</span>
+samplesize =<span class="st"> </span><span class="kw">rep</span>(<span class="dv">1000</span>,<span class="dv">21</span>)
+
+df =<span class="st"> </span><span class="kw">data.frame</span>(appr,samplesize,enddate)</code></pre></div>
+<p>The model is just demwin as the dependent and the rest of the variables as independents. I then made a a set of data to test on. I chose approvals from 30 to 50 since that is what our data is close to.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">predictions =<span class="st"> </span><span class="kw">data.frame</span>(<span class="kw">predict</span>(mod1,df))
+predictions =<span class="st"> </span>predictions <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">probs =</span> predict.mod1..df.<span class="op">/</span><span class="dv">100</span>, <span class="dt">seats =</span> <span class="dv">435</span><span class="op">*</span>probs) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">super =</span> <span class="kw">as.numeric</span>((seats <span class="op">&gt;</span><span class="st"> </span><span class="dv">70</span>)), <span class="dt">regmaj =</span> <span class="kw">as.numeric</span>((seats <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>)) )
+<span class="kw">head</span>(predictions)</code></pre></div>
+<pre><code>##   predict.mod1..df.     probs    seats super regmaj
+## 1          14.65138 0.1465138 63.73349     0      1
+## 2          14.07436 0.1407436 61.22345     0      1
+## 3          13.49733 0.1349733 58.71340     0      1
+## 4          12.92031 0.1292031 56.20336     0      1
+## 5          12.34329 0.1234329 53.69331     0      1
+## 6          11.76627 0.1176627 51.18327     0      1</code></pre>
+<p>Since demwin is the difference between dem support and rep support, 435 * demwin is the difference in seats that a party will have. To have a majority this number must be greater than 0 and to have a super majority it must be greater than 70.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ggplot</span>(predictions, <span class="kw">aes</span>(<span class="dt">x =</span> seats)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_histogram</span>(<span class="dt">bins =</span> <span class="dv">10</span>)</code></pre></div>
-<p><img src="midterm_project_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">mean</span>(predictions<span class="op">$</span>super)</code></pre></div>
-<pre><code>## [1] 0</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">mean</span>(predictions<span class="op">$</span>regmaj)</code></pre></div>
-<pre><code>## [1] 1</code></pre>
-<div id="first-i-created-a-linear-model-which-used-appr-samplesize-and-enddate-as-predictors-for-demwin.-i-then-created-a-dataframe-with-approval-from-30-to-50-since-thats-close-to-the-range-of-his-approval-sample-size-constant-at-1000-and-the-end-date-constant-at-the-last-data-a-poll-was-recorded.-i-used-this-dataframe-to-create-a-distribution-of-predictions-for-democratic-support-over-republicans-based-on-trumps-approval-rating.-i-then-used-the-predictions-to-find-how-many-more-seats-in-the-house-one-party-would-win-over-the-other.-one-party-must-have-70-more-seats-than-the-other-to-have-a-super-majority-and-1-more-seat-to-have-a-regular-majority.-the-probability-for-a-super-majority-is-1-and-the-probability-for-a-regular-majority-is-0." class="section level3">
-<h3>First I created a linear model which used appr, samplesize, and enddate as predictors for demwin. I then created a dataframe with approval from 30% to 50% since thats close to the range of his approval, sample size constant at 1000, and the end date constant at the last data a poll was recorded. I used this dataframe to create a distribution of predictions for democratic support over republicans based on Trump’s approval rating. I then used the predictions to find how many more seats in the house one party would win over the other. One party must have 70 more seats than the other to have a super majority and 1 more seat to have a regular majority. The probability for a super majority is 1 and the probability for a regular majority is 0.</h3>
+<p><img src="midterm_project_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>It looks like the difference in seats is always positive, in fact, the mean of regular majority is 1 and the mean of super majority is 0. This means that it is 100% likely there will be a majority but 0% likely there will be a super majority. This seems unlikely since nothing is ever certain.</p>
 </div>
-</div>
-<div id="predictions-using-a-cross-validated-tree" class="section level2">
-<h2>Predictions using a cross validated tree:</h2>
+<div id="predictions-using-a-cross-validated-tree" class="section level1">
+<h1>Predictions using a cross validated tree:</h1>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">dat =<span class="st"> </span>mid_appr <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">select</span>(demwin,appr,samplesize,enddate)
 <span class="kw">set.seed</span>(<span class="dv">1</span>)
 mod2 &lt;-<span class="st"> </span><span class="kw">tree</span>(demwin <span class="op">~</span><span class="st"> </span>.<span class="op">-</span>demwin, <span class="dt">data =</span> dat)
-
-cv.dat &lt;-<span class="st"> </span><span class="kw">cv.tree</span>(mod2)
+<span class="kw">plot</span>(mod2)
+<span class="kw">text</span>(mod2, <span class="dt">pretty =</span> <span class="dv">0</span>)</code></pre></div>
+<p><img src="midterm_project_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p>Making the tree is similar to making the linear model at first. It looks pretty cluttered right now.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">cv.dat &lt;-<span class="st"> </span><span class="kw">cv.tree</span>(mod2)
 <span class="kw">plot</span>(cv.dat)</code></pre></div>
-<p><img src="midterm_project_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mod2prune &lt;-<span class="st"> </span><span class="kw">prune.tree</span>(mod2, <span class="dt">best =</span> <span class="dv">8</span>)
+<p><img src="midterm_project_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p>It needs to be pruned, or made a bit simpler. This plot says that it doesn’t get much better after a size of 5.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mod2prune &lt;-<span class="st"> </span><span class="kw">prune.tree</span>(mod2, <span class="dt">best =</span> <span class="dv">5</span>)
 <span class="kw">plot</span>(mod2prune)
 <span class="kw">text</span>(mod2prune, <span class="dt">pretty =</span> <span class="dv">0</span>)</code></pre></div>
-<p><img src="midterm_project_files/figure-html/unnamed-chunk-4-2.png" width="672" /></p>
-<div id="first-i-made-the-tree-and-pruned-it." class="section level3">
-<h3>First I made the tree and pruned it.</h3>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">predictions2 =<span class="st"> </span><span class="kw">data.frame</span>(<span class="kw">predict</span>(mod2prune,df))</code></pre></div>
-<pre><code>## Warning in pred1.tree(object, tree.matrix(newdata)): NAs introduced by
-## coercion</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">predictions2 =<span class="st"> </span>predictions2 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">probs =</span> predict.mod2prune..df.<span class="op">/</span><span class="dv">100</span>, <span class="dt">seats =</span> <span class="dv">468</span><span class="op">*</span>probs) <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">super =</span> <span class="kw">as.numeric</span>((seats <span class="op">&gt;</span><span class="st"> </span><span class="dv">70</span>)), <span class="dt">regmaj =</span> <span class="kw">as.numeric</span>((seats <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>)) )
-<span class="kw">ggplot</span>(predictions2, <span class="kw">aes</span>(<span class="dt">x =</span> seats)) <span class="op">+</span><span class="st"> </span><span class="kw">geom_histogram</span>()</code></pre></div>
-<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
-<p><img src="midterm_project_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">mean</span>(predictions2<span class="op">$</span>super)</code></pre></div>
+<p><img src="midterm_project_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p>This looks simpler but it may have lost some accuracy.</p>
+<p><img src="midterm_project_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
 <pre><code>## [1] 0</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">mean</span>(predictions2<span class="op">$</span>regmaj)</code></pre></div>
 <pre><code>## [1] 1</code></pre>
-</div>
-<div id="i-have-the-same-variables-as-before-but-this-time-i-made-a-tree.-democrats-are-100-expected-to-have-a-majority-but-they-are-not-expected-to-have-a-super-majority-according-to-this-tree.-i-feel-that-a-tree-would-be-much-better-with-more-related-variables-in-the-dataframe." class="section level3">
-<h3>I have the same variables as before but this time I made a tree. Democrats are 100% expected to have a majority, but they are not expected to have a super majority according to this tree. I feel that a tree would be much better with more related variables in the dataframe.</h3>
-</div>
+<p>Predictions were made similarly. This time the predictions say that demwin is always positive. Again they do not have a super majority.</p>
 </div>
 
 

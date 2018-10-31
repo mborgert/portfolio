@@ -14,7 +14,9 @@ midterm_polls = read.csv("C:/Users/mitch/Documents/portfolio/data/mid_polls.csv"
 
 approve_polls = read.csv("C:/Users/mitch/Documents/portfolio/data/approv_polls.csv")
 ```
-##The data:
+
+Here is a look at the data. This data created from two data sets from 538. Appr is the presidents approval rating, samplesize is the sample size of each poll, enddate is when the poll was finished, and dem and rep are what percent of people want to vote for each party. I've made the demwin variable since I want to see the chance that the democrats would have a majority. This variable was just dem - rep to see the difference in support.
+
 ```{r,echo = FALSE, message=FALSE,warning=FALSE,error=FALSE}
 approve_polls$enddate = mdy(approve_polls$enddate)
 midterm_polls$enddate = mdy(midterm_polls$enddate)
@@ -26,8 +28,18 @@ mid_appr = left_join(midterm_polls,approve_mean, by = "enddate")
 mid_appr = mid_appr %>% mutate(demwin = as.numeric(dem - rep))
 
 
-mod1 = lm(demwin ~ appr + samplesize + enddate,data = mid_appr)
 dat = mid_appr %>% select(appr, samplesize, enddate, dem, rep, demwin)
+
+pander(head(dat))
+
+```
+
+#Predictions using a linear model:
+
+We want to see if a linear model can predict demwin givern our variables. 
+
+```{r, message=FALSE,warning=FALSE,error=FALSE}
+mod1 = lm(demwin ~ appr + samplesize + enddate,data = mid_appr)
 
 x = ymd("2018-04-19")
 enddate = rep(x,21)
@@ -35,52 +47,60 @@ appr = 30:50
 samplesize = rep(1000,21)
 
 df = data.frame(appr,samplesize,enddate)
-
-pander(head(dat))
-
-
-predictions = data.frame(predict(mod1,df))
-predictions = predictions %>% mutate(probs = predict.mod1..df./100, seats = 435*probs) %>% mutate(super = as.numeric((seats > 70)), regmaj = as.numeric((seats > 0)) )
 ```
 
-###This data created from two datasets from 538. Appr is the presidents approval rating, samplesize is the sample size of each poll, enddate is when the poll was finished, and dem and rep are what percent of people want to vote for each party. I created the demwin variable since I was prediction the chance the democrats would have a majority. This variable was just dem - rep to see the difference in support.
+The model is just demwin as the dependent and the rest of the variables as independents. I then made a a set of data to test on. I chose approvals from 30 to 50 since that is what our data is close to. 
 
-##Predictions using a linear model:
+```{r, message=FALSE,warning=FALSE,error=FALSE}
+predictions = data.frame(predict(mod1,df))
+predictions = predictions %>% mutate(probs = predict.mod1..df./100, seats = 435*probs) %>% mutate(super = as.numeric((seats > 70)), regmaj = as.numeric((seats > 0)) )
+head(predictions)
+```
+
+Since demwin is the difference between dem support and rep support, 435 * demwin is the difference in seats that a party will have. To have a majority this number must be greater than 0 and to have a super majority it must be greater than 70. 
 
 ```{r, message=FALSE,warning=FALSE,error=FALSE}
 ggplot(predictions, aes(x = seats)) + geom_histogram(bins = 10)
-mean(predictions$super)
-mean(predictions$regmaj)
 ```
 
-### First I created a linear model which used appr, samplesize, and enddate as predictors for demwin. I then created a dataframe with approval from 30% to 50% since thats close to the range of his approval, sample size constant at 1000, and the end date constant at the last data a poll was recorded. I used this dataframe to create a distribution of predictions for democratic support over republicans based on Trump's approval rating. I then used the predictions to find how many more seats in the house one party would win over the other. One party must have 70 more seats than the other to have a super majority and 1 more seat to have a regular majority. The probability for a super majority is 1 and the probability for a regular majority is 0. 
+It looks like the difference in seats is always positive, in fact, the mean of regular majority is 1 and the mean of super majority is 0. This means that it is 100% likely there will be a majority but 0% likely there will be a super majority. This seems unlikely since nothing is ever certain.
 
-##Predictions using a cross validated tree:
+
+#Predictions using a cross validated tree:
 ```{r,message=FALSE,warning=FALSE,error=FALSE}
 dat = mid_appr %>% select(demwin,appr,samplesize,enddate)
 set.seed(1)
 mod2 <- tree(demwin ~ .-demwin, data = dat)
+plot(mod2)
+text(mod2, pretty = 0)
+```
 
+Making the tree is similar to making the linear model at first. It looks pretty cluttered right now. 
+
+```{r, message=FALSE,warning=FALSE,error=FALSE}
 cv.dat <- cv.tree(mod2)
 plot(cv.dat)
+```
 
-mod2prune <- prune.tree(mod2, best = 8)
+It needs to be pruned, or made a bit simpler. This plot says that it doesn't get much better after a size of 5. 
+
+```{r, message=FALSE,warning=FALSE,error=FALSE}
+mod2prune <- prune.tree(mod2, best = 5)
 plot(mod2prune)
 text(mod2prune, pretty = 0)
 ```
 
-###First I made the tree and pruned it.
+This looks simpler but it may have lost some accuracy. 
 
-```{r}
+```{r, echo = FALSE, message=FALSE,warning=FALSE,error=FALSE}
 predictions2 = data.frame(predict(mod2prune,df))
-predictions2 = predictions2 %>% mutate(probs = predict.mod2prune..df./100, seats = 468*probs) %>% mutate(super = as.numeric((seats > 70)), regmaj = as.numeric((seats > 0)) )
+predictions2 = predictions2 %>% mutate(probs = predict.mod2prune..df./100, seats = 435*probs) %>% mutate(super = as.numeric((seats > 70)), regmaj = as.numeric((seats > 0)) )
 ggplot(predictions2, aes(x = seats)) + geom_histogram()
-
 mean(predictions2$super)
 mean(predictions2$regmaj)
 
 
 ```
 
-###I have the same variables as before but this time I made a tree. Democrats are 100% expected to have a majority, but they are not expected to have a super majority according to this tree. I feel that a tree would be much better with more related variables in the dataframe. 
+Predictions were made similarly. This time the predictions say that demwin is always positive. Again they do not have a super majority. 
 
