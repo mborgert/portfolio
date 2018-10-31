@@ -184,12 +184,14 @@ $(document).ready(function () {
 </div>
 
 
-<p>I was given a data set where the researchers had an idea of how the variables would relate. These were nine factors about emotional health and our goal was to see if the variables would be grouped into these nine factors through confirmatory factor analysis. Only a couple were kind of close and the rest were far from it.</p>
-<p>Since our goal was to see how the variables related, I first looked at how a computer would group the variables.</p>
+<p>For this project I was given a data set where the researchers had an idea of how the variables would relate. These were nine factors about emotional health and our goal was to see if the variables would be grouped into these nine factors through confirmatory factor analysis. Only a couple were close and the rest were far from it.</p>
+<p>Since our goal was to see how the variables related, I first looked at how R would group the variables.</p>
 <div id="data-exploration-for-factor-analysis" class="section level1">
 <h1>Data Exploration for factor analysis</h1>
-<p><img src="conf_fact_project_files/figure-html/unnamed-chunk-2-1.png" width="672" /><img src="conf_fact_project_files/figure-html/unnamed-chunk-2-2.png" width="672" /></p>
-<p>The corrplot has some very small groupings of variables when it is forced to do 9. This may leave us with some lackluster factors that do not fit what is predicted. The scree plot tells us that we could take 2 factors if we followed the elbow rule or about 12 factors if we choose to go for an eigenvalue less than 1. We will still try 9 since that is what is expected. Now we will look at the factor loadings, given that there should be 9 factors.</p>
+<p><img src="conf_fact_project_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<p>This first plot is called a corrplot. Corrplots try to group variables that are highly correlated into however many groups we want. This corrplot has some very small groupings of variables when it is forced to do nine. This may leave us with some lackluster factors that do not fit what is predicted.</p>
+<p><img src="conf_fact_project_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p>This second plot is a scree plot. It looks at the eigenvalues to determine how many factors we should have. The scree plot tells us that we could take 2 factors if we followed the elbow rule or about 12 factors if we choose to go for an eigenvalue less than 1. We will still try 9 since that is what is expected. Now we will look at the factor loadings, given that there should be 9 factors.</p>
 </div>
 <div id="factors-and-their-loadings" class="section level1">
 <h1>Factors and their loadings</h1>
@@ -259,25 +261,22 @@ Factor 2 (RC4): BSI07,25,35,37,38,46,47,48,49,52,53. BSI Anxiety subscale<br />
 Factor 3 (RC9): BSI20,21,24,41,42,43,51. BSI Interpersonal sensitivity subscale<br />
 Factor 4 (RC5): BSI14,15,16,17,32. BSI Depression subscale<br />
 Factor 5 (RC2): BSI04,06,10,13,40,41,46. BSI Hostility subscale<br />
-Factor 6 (RC3): BSI01,02,07,23,29,30. Somatization subscale<br />
-Factor 7 (RC7): BSI08,44,45. BSI Psychoticism subscale<br />
-Factor 8 (RC6): BSI10,11,25,28 BSI Phobic anxiety subscale<br />
-Factor 9 (RC8): BSI33,34. BSI Paranoid ideation subscale</p>
-<p>All of the factors match with at least one variable in the actual subscales except factor 9 which I am calling BSI Paranoid ideation even though it shares no factors. Factors 7 and 9 both share have a variable in Psychoticism but I chose Factor 7 simply because it came first. It turns out that things are not working as predicted. Now we will work on a model to predict the overprotection subscale.</p>
+Factor 6 (RC3): BSI01,02,07,23,29,30. Somatization subscale</p>
+<p>These factors are not associating as expected. After factor 6, the rest of the factors do not contain nearly enough of the expected variables to be considered close to the expected. Now we will create a model to predict the overprotection subscale in the data.</p>
 </div>
 <div id="data-exploration-for-model-building" class="section level1">
 <h1>Data exploration for model building</h1>
-<p><img src="conf_fact_project_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
-<p>From some bivariate graphs of demographic variables vs overprotection we can see that there may be a relationship between age and overprotection. Females may have a higher overprotection than males. Living situation may be something that effects overprotection. Both having siblings and religiousness do not seem very significant.</p>
 <p><img src="conf_fact_project_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p>From some bivariate graphs of demographic variables vs overprotection we can see that there may be a relationship between age and overprotection. Females may have a higher overprotection than males. Living situation may be something that effects overprotection. Both having siblings and religiousness do not seem very significant.</p>
+<p><img src="conf_fact_project_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
 <p>For the neighborhood variables it looks like drug addicts in the neighborhood and youth gang fights may effect overprotection. Violence and drug dealing to not seem significant.</p>
 </div>
 <div id="model-building" class="section level1">
 <h1>Model building</h1>
 <div id="for-this-first-model-i-will-just-use-the-bsi-variables-that-maximize-r2-and-some-demographic-variables." class="section level2">
 <h2>For this first model I will just use the BSI variables that maximize R^2 and some demographic variables.</h2>
-<p>First we will see what automatic variable selection thinks. Then I will try out some models and end up with model 1.</p>
-<p><img src="conf_fact_project_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p>First we will see what automatic variable selection thinks.</p>
+<p><img src="conf_fact_project_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
 <pre><code>##                   (Intercept)                 BSI_obsessive 
 ##                          TRUE                         FALSE 
 ##                   BSI_anxiety BSI_interpersonal_sensitivity 
@@ -288,6 +287,7 @@ Factor 9 (RC8): BSI33,34. BSI Paranoid ideation subscale</p>
 ##                          TRUE                         FALSE 
 ##            BSI_phobic_anxiety         BSI_paranoid_ideation 
 ##                         FALSE                         FALSE</code></pre>
+<p>BSI_depression, BSI_hostility, and BSI_somatization seem to be significant variables.</p>
 <table>
 <caption>Table continues below</caption>
 <colgroup>
@@ -427,6 +427,7 @@ Factor 9 (RC8): BSI33,34. BSI Paranoid ideation subscale</p>
 </tbody>
 </table>
 <pre><code>## [1] 361.1086</code></pre>
+<p>This model is not great, with at adjusted R^2 of .1119. Lets see if we can make it better.</p>
 </div>
 <div id="for-the-second-model-i-will-try-forward-selection-starting-with-age-and-then-add-neighborhood-and-bsi-variables." class="section level2">
 <h2>For the second model I will try forward selection starting with age and then add neighborhood and bsi variables.</h2>
@@ -547,6 +548,7 @@ Factor 9 (RC8): BSI33,34. BSI Paranoid ideation subscale</p>
 </tbody>
 </table>
 <pre><code>## [1] 373.0254</code></pre>
+<p>This model is also not great, but maybe if we combine the models it will be better.</p>
 <p>Model 1 has a adjusted R^2 of .111 and a AIC of 361.1. Model 2 has an adjusted R^2 of .075 and an AIC of 373.02. Model 1 is a better model. For the final model we will add the effective variables in model 2 to model 1.</p>
 <table>
 <colgroup>
@@ -692,7 +694,7 @@ Factor 9 (RC8): BSI33,34. BSI Paranoid ideation subscale</p>
 </tbody>
 </table>
 <pre><code>## [1] 360.5092</code></pre>
-<p><img src="conf_fact_project_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<p><img src="conf_fact_project_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
 <p>This model has an adjusted R^2 of .134 and an AIC of 360.509, making it the best model. The residuals of this model are mostly normal. For our coefficients we have -.04(age) which is a -.04 decrease in overprotection as age decreases. There is .144 increasing for living with one parent when compared to two parents and -.19 for other. There is -.1869 decrease in overprotection for males when compared to females. For BSI-hostility there is a .05 increase for each increase in the score. There is a -.01 decrease and a .032 increase for BSI_paranoid_ideation and BSI somatization respectively. For NGHB2, drug addicts in a neighborhood, we have .19 increase if it is somewhat a problem, .291 if it is quite a problem, and .397 if it is very much a problem. Finally for NGHB8, drug dealing, we have a .015 increase if it is somewhat a problem, -.214 decrease if it is quite a problem, and -.24 decrease if it is very much a problem.</p>
 </div>
 </div>
