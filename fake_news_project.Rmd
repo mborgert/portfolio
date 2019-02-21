@@ -7,6 +7,20 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+```{r, include=FALSE, echo=FALSE, message = FALSE, warning = FALSE}
+library(tidyr)
+library(dplyr)
+library(ggplot2)
+library(ROCR)
+library(caret)
+library(questionr)
+library(lmtest)
+library(leaps)
+library(pander)
+library(ResourceSelection)
+library(knitr)
+```
+
 ```{r,  echo=FALSE, message = FALSE, warning = FALSE}
 library(haven)
 library(dplyr)
@@ -38,20 +52,6 @@ pewdata <- data %$% data.frame(pew1 = factor(replace(pew1,pew1 == 9,NA),labels =
                                partyln = factor(replace(partyln,partyln == 9, NA),labels = c("Republican","Democratic")),
                                ideo = factor(replace(ideo,ideo == 9, NA),labels=c("Very conservative","Conservative","Moderate","Libaral","Very libaral")))
 
-```
-
-```{r, include=FALSE, echo=FALSE, message = FALSE, warning = FALSE}
-library(tidyr)
-library(dplyr)
-library(ggplot2)
-library(ROCR)
-library(caret)
-library(questionr)
-library(lmtest)
-library(leaps)
-library(pander)
-library(ResourceSelection)
-library(knitr)
 ```
 
 Our goal for this project was to look at how different political parties viewed fakes news. Our data set was from the PEW Research center and it contained question such as "How well do you think you can determine a fake news story". These type of questions are the PEW questions which are:   
@@ -136,40 +136,45 @@ pewideo
 Then we looked at how the PEW questions distributed across ideology. We can see that answers for the PEW questions do sometimes differ among ideologies. Specifically people who are very liberal or very conservative have stronger beliefs about PEW6. Now we will try to create a model.
 
 ```{r, echo=FALSE, message = FALSE, warning = FALSE}
+set.seed(1)
 levels(pewdata$ideo) = c("Extreme","Moderate" , "Moderate", "Moderate","Extreme")
 pew2 <- pewdata %>% select(pew1,pew2,pew3,pew4,pew5a,pew5b,pew5c,pew6,pew7,ideo,sex,age,educ2) %>% na.omit
-
-mod1 <- glm(ideo~.-ideo,data=pew2,family="binomial")
+train = sample(1002,1002*(2/3))
+mod1 <- glm(ideo~.-ideo,data=pew2,family="binomial", subset = train)
 summary(mod1)
 ```
 
-After selecting all of the PEW questions and a couple of extra variables we created a logistic model. The dependent variable here is political ideology. We changed the variable from 5 levels to just 2, extreme and moderate. Extreme included people who were very liberal and very conservative. Moderate was everything else. 
+After selecting all of the PEW questions and a couple of extra variables, we created a logistic model. The dependent variable here is political ideology. We changed the variable from 5 levels to just 2, extreme and moderate. Extreme included people who were very liberal and very conservative. Moderate was everything else. We also seperated the data into a training dataset to build the model and a testing set for later. 
 
 ```{r, echo=FALSE, message = FALSE, warning = FALSE}
-model.pred.prob <- predict(mod1, type='response')
-pr <- prediction(model.pred.prob, mod1$y)
-perf <- performance(pr, measure="tpr", x.measure="fpr")
+predicts = predict(mod1,pew2[-train,], type = "response")
+predictions <- prediction(predicts,pew2[-train,]$ideo)
 
-perf.f1 <- performance(pr,measure="f")
-plot(perf.f1)
+plot(unlist(performance(predictions, "sens")@x.values), unlist(performance(predictions, "sens")@y.values), 
+     type="l", lwd=2, ylab="Specificity", xlab="Cutoff")
+par(new=TRUE)
+plot(unlist(performance(predictions, "spec")@x.values), unlist(performance(predictions, "spec")@y.values), 
+     type="l", lwd=2, col='red', ylab="", xlab="")
+axis(4, at=seq(0,1,0.2))
+mtext("Specificity",side=4, padj=-2, col='red')
 ```
-With a glm we need to find a cutoff point for what group a probability goes into. This plot lets us get a good idea. The cutoff should be around when the line starts to drop off. I'm choosing .85. So, in this model a true positive for extreme will be less than .85 and a true negative for moderate will be greater than .85.
+    
+With a glm we need to find a cutoff point for what group a probability goes into, either moderate of extreme. We do this by looking at a graph of possible sensitivities and specificities. We choose the x value where they intersect. This maximizes sensitivity and specificity. We wont be biased towards positives or negatives. Since this is all an estimation and its impossible to be exact, we'll just go with .89. So, in this model a true positive for extreme will be less than .89 and a true negative for moderate will be greater than .89.
 
 ```{r, echo=FALSE, message = FALSE, warning = FALSE}
 
-df = data.frame(model.pred.prob)
-plot.mpp <- data.frame(prediction = model.pred.prob, 
-                       truth = factor(mod1$y, labels=c("Extreme", "Moderate")))
+plot.mpp <- data.frame(prediction = predicts, 
+                       truth = factor(pew2[-train,]$ideo, labels=c("Extreme", "Moderate")))
 
 ggplot(plot.mpp, aes(x=truth, y=prediction, fill=truth)) + 
-      geom_jitter(width=.2) + geom_violin(alpha=.4) + theme_bw() + geom_hline(yintercept=.85)
+      geom_jitter(width=.2) + geom_violin(alpha=.4) + theme_bw() + geom_hline(yintercept=.89)
 ```
 
 This plot shows that we chose a good cutoff. For the moderates, most of them are above the line. If the line was any higher we would predict too many moderates falsely. 
 
 
 ```{r, echo=FALSE, message = FALSE, warning = FALSE}
-plot.mpp$pred.class <- ifelse(plot.mpp$prediction <.85, 0,1)
+plot.mpp$pred.class <- ifelse(plot.mpp$prediction <.89, 0,1)
 
 plot.mpp$pred.class <- factor(plot.mpp$pred.class, labels=c("Extreme", "Moderate"))
 
@@ -177,42 +182,46 @@ plot.mpp$pred.class <- factor(plot.mpp$pred.class, labels=c("Extreme", "Moderate
 confusionMatrix(plot.mpp$pred.class, plot.mpp$truth, positive="Extreme")
 ```
 
-Our model had a 71% accuracy rate. The specificity (true negative rate) is ok at 74% and the sensitivity (true positive rate) is average at 53%. This could be because of the low sample size of extreme ideologies. Next we made a model with political party being the dependent variable. 
+Our model had a 55% accuracy rate. The specificity (true negative rate) is better at 60% and the sensitivity (true positive rate) is average at 54%. This could be because of the low sample size of extreme ideologies. Next we made a model with political party being the dependent variable. 
 
 ```{r, echo=FALSE, message = FALSE, warning = FALSE}
 levels(pewdata$party)
 levels(pewdata$party) = c("Republican","Democrat" , NA, NA,NA)
 pew2 = pewdata %>% select(pew1,pew2,pew3,pew4,pew5a,pew5b,pew5c,pew6,pew7,party,sex,age,educ2) %>% na.omit
-mod1 = glm(party~.-party,data=pew2,family="binomial")
-mod1pp = predict(mod1,type = "response")
-df = data.frame(mod1pp)
+mod1 = glm(party~.-party,data=pew2,family="binomial",subset=train)
 
-pr <- prediction(mod1pp, mod1$y)
-perf <- performance(pr, measure="tpr", x.measure="fpr")
-perf.f1 <- performance(pr,measure="f")
-plot(perf.f1)
+predicts = predict(mod1,pew2[-train,], type = "response")
+predictions <- prediction(predicts,pew2[-train,]$party)
+
+plot(unlist(performance(predictions, "sens")@x.values), unlist(performance(predictions, "sens")@y.values), 
+     type="l", lwd=2, ylab="Specificity", xlab="Cutoff")
+par(new=TRUE)
+plot(unlist(performance(predictions, "spec")@x.values), unlist(performance(predictions, "spec")@y.values), 
+     type="l", lwd=2, col='red', ylab="", xlab="")
+axis(4, at=seq(0,1,0.2))
+mtext("Specificity",side=4, padj=-2, col='red')
 ```
 
-This time our cutoff will be .49. 
+This time our cutoff will be .52. 
 
 ```{r, echo=FALSE, message = FALSE, warning = FALSE}
-plot.mod1pp <- data.frame(prediction = mod1pp, 
-                       truth = factor(mod1$y, labels=c("Republican", "Democrat")))
+plot.mod1pp <- data.frame(prediction = predicts, 
+                       truth = factor(pew2[-train,]$party, labels=c("Republican", "Democrat")))
 
-ggplot(plot.mod1pp, aes(x=truth, y=prediction, fill=truth)) + geom_jitter(width=.2) + geom_violin(alpha=.4) + theme_bw() + geom_hline(yintercept=.49)
+ggplot(plot.mod1pp, aes(x=truth, y=prediction, fill=truth)) + geom_jitter(width=.2) + geom_violin(alpha=.4) + theme_bw() + geom_hline(yintercept=.55)
 ```
 
 This time republican is a positive and democrat is a negative. Again, we should have a higher specificity than sensitivity.  
 
 ```{r, echo=FALSE, message = FALSE, warning = FALSE}
-plot.mod1pp$pred.class <- ifelse(plot.mod1pp$prediction <.49, 0,1)
+plot.mod1pp$pred.class <- ifelse(plot.mod1pp$prediction <.55, 0,1)
 plot.mod1pp$pred.class <- factor(plot.mod1pp$pred.class, labels=c("Republican", "Democrat"))
 
 confusionMatrix(plot.mod1pp$pred.class, plot.mod1pp$truth, positive="Republican")
 
 ```
 
-This model had a higher sensitivity than the previous one but it had a lower specificity. The overall accuracy was also lower.
+This model is also not very accurate. It has a higher specificity than the previous model, but thats the only improvement.
 
 Overall these models showed that accurate predictions should be possible with better data. I think with a higher sample size and more specific questions political ideology can be predicted with fake news opinions. 
 
