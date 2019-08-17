@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+
+<title>Wine Quality Analysis</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/journal.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; background-color: #f8f8f8; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+pre, code { background-color: #f8f8f8; }
+code > span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code > span.dt { color: #204a87; } /* DataType */
+code > span.dv { color: #0000cf; } /* DecVal */
+code > span.bn { color: #0000cf; } /* BaseN */
+code > span.fl { color: #0000cf; } /* Float */
+code > span.ch { color: #4e9a06; } /* Char */
+code > span.st { color: #4e9a06; } /* String */
+code > span.co { color: #8f5902; font-style: italic; } /* Comment */
+code > span.ot { color: #8f5902; } /* Other */
+code > span.al { color: #ef2929; } /* Alert */
+code > span.fu { color: #000000; } /* Function */
+code > span.er { color: #a40000; font-weight: bold; } /* Error */
+code > span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #000000; } /* Constant */
+code > span.sc { color: #000000; } /* SpecialChar */
+code > span.vs { color: #4e9a06; } /* VerbatimString */
+code > span.ss { color: #4e9a06; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #000000; } /* Variable */
+code > span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code > span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code > span.ex { } /* Extension */
+code > span.at { color: #c4a000; } /* Attribute */
+code > span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code > span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 61px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 66px;
+  margin-top: -66px;
+}
+
+.section h2 {
+  padding-top: 66px;
+  margin-top: -66px;
+}
+.section h3 {
+  padding-top: 66px;
+  margin-top: -66px;
+}
+.section h4 {
+  padding-top: 66px;
+  margin-top: -66px;
+}
+.section h5 {
+  padding-top: 66px;
+  margin-top: -66px;
+}
+.section h6 {
+  padding-top: 66px;
+  margin-top: -66px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+
+
+<div class="navbar navbar-inverse  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Portfolio</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="about_me.html">About Me</a>
+</li>
+<li>
+  <a href="contact.html">Contact</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Wine Quality Analysis</h1>
+
+</div>
+
+
+<div id="data-reading-and-packages" class="section level1">
+<h1>Data reading and packages</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(corrplot)
+<span class="kw">library</span>(ipred)
+<span class="kw">library</span>(randomForest)
+<span class="kw">library</span>(rpart)
+<span class="kw">library</span>(tree)
+<span class="kw">library</span>(SDMTools)
+<span class="kw">library</span>(formattable)
+
+redwine =<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;C:/Users/mitch/Documents/portfolio/data/winequality-red.csv&quot;</span>, <span class="dt">header =</span> <span class="ot">TRUE</span>, <span class="dt">sep =</span> <span class="st">&quot;;&quot;</span>)
+whitewine =<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;C:/Users/mitch/Documents/portfolio/data/winequality-white.csv&quot;</span>, <span class="dt">header =</span> <span class="ot">TRUE</span>, <span class="dt">sep =</span> <span class="st">&quot;;&quot;</span>)
+whitewine2 =<span class="st"> </span><span class="kw">read.csv</span>(<span class="st">&quot;C:/Users/mitch/Documents/portfolio/data/winequality-white.csv&quot;</span>, <span class="dt">header =</span> <span class="ot">TRUE</span>, <span class="dt">sep =</span> <span class="st">&quot;;&quot;</span>)
+whitewine<span class="op">$</span>gba =<span class="st"> </span><span class="kw">ifelse</span>(whitewine<span class="op">$</span>quality<span class="op">&lt;</span><span class="dv">5</span>,<span class="st">&quot;bad&quot;</span>,<span class="kw">ifelse</span>(whitewine<span class="op">$</span>quality<span class="op">&gt;</span><span class="dv">6</span>,<span class="st">&quot;good&quot;</span>,<span class="st">&quot;average&quot;</span>))
+whitewine<span class="op">$</span>gba =<span class="st"> </span><span class="kw">factor</span>(whitewine<span class="op">$</span>gba)
+
+
+<span class="kw">set.seed</span>(<span class="dv">33</span>)
+train_white =<span class="st"> </span><span class="kw">sample</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">4898</span>, <span class="dv">1616</span>)
+train_red =<span class="st"> </span><span class="kw">sample</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">1599</span>,<span class="dv">1066</span>)</code></pre></div>
+</div>
+<div id="exploration" class="section level1">
+<h1>Exploration</h1>
+<p>Our goal is to model wine quality so lets take a look at that variable for both datasets. After looking at what wine reviewers look for found that alcohol and volatile acidity may be important</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">par</span>(<span class="dt">mfrow=</span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>))
+counts =<span class="st"> </span><span class="kw">table</span>(whitewine<span class="op">$</span>quality)
+<span class="kw">barplot</span>(counts, <span class="dt">main =</span> <span class="st">&quot;White Wine&quot;</span>)
+counts2 =<span class="st"> </span><span class="kw">table</span>(redwine<span class="op">$</span>quality)
+<span class="kw">barplot</span>(counts2, <span class="dt">main =</span> <span class="st">&quot;Red Wine&quot;</span>)</code></pre></div>
+<p><img src="wine_project_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">correlations_w =<span class="st"> </span><span class="kw">cor</span>(whitewine2[<span class="op">-</span><span class="dv">12</span>], whitewine2<span class="op">$</span>quality)
+correlations_w</code></pre></div>
+<pre><code>##                              [,1]
+## fixed.acidity        -0.113662831
+## volatile.acidity     -0.194722969
+## citric.acid          -0.009209091
+## residual.sugar       -0.097576829
+## chlorides            -0.209934411
+## free.sulfur.dioxide   0.008158067
+## total.sulfur.dioxide -0.174737218
+## density              -0.307123313
+## pH                    0.099427246
+## sulphates             0.053677877
+## alcohol               0.435574715</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">correlations_r =<span class="st"> </span><span class="kw">cor</span>(redwine[<span class="op">-</span><span class="dv">12</span>], redwine<span class="op">$</span>quality)
+correlations_r</code></pre></div>
+<pre><code>##                             [,1]
+## fixed.acidity         0.12405165
+## volatile.acidity     -0.39055778
+## citric.acid           0.22637251
+## residual.sugar        0.01373164
+## chlorides            -0.12890656
+## free.sulfur.dioxide  -0.05065606
+## total.sulfur.dioxide -0.18510029
+## density              -0.17491923
+## pH                   -0.05773139
+## sulphates             0.25139708
+## alcohol               0.47616632</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">var</span>(whitewine<span class="op">$</span>quality)</code></pre></div>
+<pre><code>## [1] 0.7843557</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">var</span>(redwine<span class="op">$</span>quality)</code></pre></div>
+<pre><code>## [1] 0.6521684</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">df =<span class="st"> </span><span class="kw">data.frame</span>(correlations_w, correlations_r)
+<span class="kw">colnames</span>(df) =<span class="st"> </span><span class="kw">c</span>(<span class="st">&quot;white wine&quot;</span>, <span class="st">&quot;red wine&quot;</span>)
+df</code></pre></div>
+<pre><code>##                        white wine    red wine
+## fixed.acidity        -0.113662831  0.12405165
+## volatile.acidity     -0.194722969 -0.39055778
+## citric.acid          -0.009209091  0.22637251
+## residual.sugar       -0.097576829  0.01373164
+## chlorides            -0.209934411 -0.12890656
+## free.sulfur.dioxide   0.008158067 -0.05065606
+## total.sulfur.dioxide -0.174737218 -0.18510029
+## density              -0.307123313 -0.17491923
+## pH                    0.099427246 -0.05773139
+## sulphates             0.053677877  0.25139708
+## alcohol               0.435574715  0.47616632</code></pre>
+</div>
+<div id="more-exploration-w-tree" class="section level1">
+<h1>More Exploration w/ tree</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">my.control &lt;-<span class="st"> </span><span class="kw">rpart.control</span>(<span class="dt">cp=</span><span class="dv">0</span>, <span class="dt">xval=</span><span class="dv">10</span>)
+fit1&lt;-<span class="st"> </span><span class="kw">rpart</span>(quality<span class="op">~</span>., <span class="dt">data=</span>whitewine2[<span class="op">-</span>train_white,], <span class="dt">method=</span><span class="st">&quot;anova&quot;</span>, <span class="dt">control=</span>my.control)
+<span class="co">#printcp(fit1)  </span>
+tree11 &lt;-<span class="kw">prune</span>(fit1,<span class="dt">cp=</span>.<span class="dv">009</span>)
+<span class="kw">plot</span>(tree11,<span class="dt">uniform=</span>T, <span class="dt">margin=</span><span class="fl">0.2</span>)
+<span class="kw">text</span>(tree11,<span class="dt">use.n=</span>T)</code></pre></div>
+<p><img src="wine_project_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#whitewine$quality = factor(whitewine$quality)</span>
+<span class="co">#pred_w = round(predict(fit1, whitewine[train_white,]))</span>
+
+<span class="co">#df1 = data.frame(pred_w,whitewine[train_white,]$quality)</span>
+<span class="co">#table(data.frame(pred_w,whitewine[train_white,]$quality))</span>
+<span class="co">#df1$acc = rep(0,1616)</span>
+
+##mean(df1$acc)</code></pre></div>
+</div>
+<div id="random-forest-regression" class="section level1">
+<h1>random forest regression</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">rf_w  =<span class="st"> </span><span class="kw">randomForest</span>(quality<span class="op">~</span>.,<span class="dt">data=</span>whitewine2[<span class="op">-</span>train_white,], <span class="dt">ntree=</span><span class="dv">100</span>, <span class="dt">norm.votes=</span>F)
+<span class="kw">print</span>(rf_w)</code></pre></div>
+<pre><code>## 
+## Call:
+##  randomForest(formula = quality ~ ., data = whitewine2[-train_white,      ], ntree = 100, norm.votes = F) 
+##                Type of random forest: regression
+##                      Number of trees: 100
+## No. of variables tried at each split: 3
+## 
+##           Mean of squared residuals: 0.3823454
+##                     % Var explained: 50.17</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">whitewine2<span class="op">$</span>quality =<span class="st"> </span><span class="kw">factor</span>(whitewine2<span class="op">$</span>quality)
+pred_w =<span class="st"> </span><span class="kw">round</span>(<span class="kw">predict</span>(rf_w, whitewine2[train_white,]))
+
+df1 =<span class="st"> </span><span class="kw">data.frame</span>(pred_w,whitewine2[train_white,]<span class="op">$</span>quality)
+<span class="kw">table</span>(<span class="kw">data.frame</span>(pred_w,whitewine2[train_white,]<span class="op">$</span>quality))</code></pre></div>
+<pre><code>##       whitewine2.train_white....quality
+## pred_w   3   4   5   6   7   8   9
+##      4   0   1   0   0   0   0   0
+##      5   6  38 312  86   2   0   0
+##      6   3  12 185 559 139  20   0
+##      7   0   1   5  51 152  36   2
+##      8   0   0   0   0   0   6   0</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">df1<span class="op">$</span>acc =<span class="st"> </span><span class="kw">rep</span>(<span class="dv">0</span>,<span class="dv">1616</span>)
+
+
+
+df1<span class="op">$</span>acc =<span class="st"> </span><span class="kw">as.numeric</span>(df1<span class="op">$</span>pred_w <span class="op">==</span><span class="st"> </span>df1<span class="op">$</span>whitewine2.train_white....quality)
+<span class="kw">mean</span>(df1<span class="op">$</span>acc)</code></pre></div>
+<pre><code>## [1] 0.6373762</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">varImpPlot</span>(rf_w)</code></pre></div>
+<p><img src="wine_project_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+</div>
+<div id="levels" class="section level1">
+<h1>3 levels</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">rf_w_gba  =<span class="st"> </span><span class="kw">randomForest</span>(gba<span class="op">~</span>.<span class="op">-</span>quality,<span class="dt">data=</span>whitewine[<span class="op">-</span>train_white,], <span class="dt">ntree=</span><span class="dv">100</span>, <span class="dt">norm.votes=</span>F)
+<span class="kw">print</span>(rf_w_gba)</code></pre></div>
+<pre><code>## 
+## Call:
+##  randomForest(formula = gba ~ . - quality, data = whitewine[-train_white,      ], ntree = 100, norm.votes = F) 
+##                Type of random forest: classification
+##                      Number of trees: 100
+## No. of variables tried at each split: 3
+## 
+##         OOB estimate of  error rate: 16.3%
+## Confusion matrix:
+##         average bad good class.error
+## average    2335   7  115  0.04965405
+## bad         103  16    3  0.86885246
+## good        307   0  396  0.43669986</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">pred_w =<span class="st"> </span><span class="kw">predict</span>(rf_w_gba, whitewine[train_white,])
+<span class="kw">table</span>(pred_w,whitewine[train_white,]<span class="op">$</span>gba)</code></pre></div>
+<pre><code>##          
+## pred_w    average  bad good
+##   average    1144   50  156
+##   bad           4    9    0
+##   good         50    2  201</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">df2 =<span class="st"> </span><span class="kw">data.frame</span>(pred_w,whitewine[train_white,]<span class="op">$</span>gba)
+df2<span class="op">$</span>acc =<span class="st"> </span><span class="kw">as.numeric</span>(df2<span class="op">$</span>pred_w <span class="op">==</span><span class="st"> </span>df2<span class="op">$</span>whitewine.train_white....gba)
+<span class="kw">mean</span>(df2<span class="op">$</span>acc)</code></pre></div>
+<pre><code>## [1] 0.8378713</code></pre>
+</div>
+<div id="redwine" class="section level1">
+<h1>redwine</h1>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">rf_r  =<span class="st"> </span><span class="kw">randomForest</span>(quality<span class="op">~</span>.,<span class="dt">data=</span>redwine[<span class="op">-</span>train_red,], <span class="dt">ntree=</span><span class="dv">100</span>, <span class="dt">norm.votes=</span>F)
+<span class="kw">print</span>(rf_r)</code></pre></div>
+<pre><code>## 
+## Call:
+##  randomForest(formula = quality ~ ., data = redwine[-train_red,      ], ntree = 100, norm.votes = F) 
+##                Type of random forest: regression
+##                      Number of trees: 100
+## No. of variables tried at each split: 3
+## 
+##           Mean of squared residuals: 0.3948705
+##                     % Var explained: 39.57</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">redwine<span class="op">$</span>quality =<span class="st"> </span><span class="kw">factor</span>(redwine<span class="op">$</span>quality)
+pred_r =<span class="st"> </span><span class="kw">round</span>(<span class="kw">predict</span>(rf_r, redwine[train_red,]))
+
+df1 =<span class="st"> </span><span class="kw">data.frame</span>(pred_r,redwine[train_red,]<span class="op">$</span>quality)
+<span class="kw">table</span>(<span class="kw">data.frame</span>(pred_r,redwine[train_red,]<span class="op">$</span>quality))</code></pre></div>
+<pre><code>##       redwine.train_red....quality
+## pred_r   3   4   5   6   7   8
+##      5   5  28 330 101   7   0
+##      6   3   7 122 304  92   6
+##      7   0   0   1  19  38   3</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">df1<span class="op">$</span>acc =<span class="st"> </span><span class="kw">rep</span>(<span class="dv">0</span>,<span class="dv">1066</span>)
+
+
+
+df1<span class="op">$</span>acc =<span class="st"> </span><span class="kw">as.numeric</span>(df1<span class="op">$</span>pred_r <span class="op">==</span><span class="st"> </span>df1<span class="op">$</span>redwine.train_red....quality)
+<span class="kw">mean</span>(df1<span class="op">$</span>acc)</code></pre></div>
+<pre><code>## [1] 0.630394</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">varImpPlot</span>(rf_r)</code></pre></div>
+<p><img src="wine_project_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

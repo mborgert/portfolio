@@ -1,0 +1,135 @@
+---
+title: "Wine Quality Analysis"
+output: html_document
+---
+
+#Data reading and packages
+```{r, message=FALSE,warning=FALSE}
+library(corrplot)
+library(ipred)
+library(randomForest)
+library(rpart)
+library(tree)
+library(SDMTools)
+library(formattable)
+
+redwine = read.csv("C:/Users/mitch/Documents/portfolio/data/winequality-red.csv", header = TRUE, sep = ";")
+whitewine = read.csv("C:/Users/mitch/Documents/portfolio/data/winequality-white.csv", header = TRUE, sep = ";")
+whitewine2 = read.csv("C:/Users/mitch/Documents/portfolio/data/winequality-white.csv", header = TRUE, sep = ";")
+whitewine$gba = ifelse(whitewine$quality<5,"bad",ifelse(whitewine$quality>6,"good","average"))
+whitewine$gba = factor(whitewine$gba)
+
+
+set.seed(33)
+train_white = sample(1:4898, 1616)
+train_red = sample(1:1599,1066)
+```
+
+#Exploration
+Our goal is to model wine quality so lets take a look at that variable for both datasets. After looking at what wine reviewers look for found that alcohol and volatile acidity may be important
+```{r}
+par(mfrow=c(1,2))
+counts = table(whitewine$quality)
+barplot(counts, main = "White Wine")
+counts2 = table(redwine$quality)
+barplot(counts2, main = "Red Wine")
+
+correlations_w = cor(whitewine2[-12], whitewine2$quality)
+correlations_w
+
+correlations_r = cor(redwine[-12], redwine$quality)
+correlations_r
+
+var(whitewine$quality)
+var(redwine$quality)
+
+df = data.frame(correlations_w, correlations_r)
+colnames(df) = c("white wine", "red wine")
+df
+```
+
+
+
+#More Exploration w/ tree
+```{r}
+my.control <- rpart.control(cp=0, xval=10)
+fit1<- rpart(quality~., data=whitewine2[-train_white,], method="anova", control=my.control)
+#printcp(fit1)  
+tree11 <-prune(fit1,cp=.009)
+plot(tree11,uniform=T, margin=0.2)
+text(tree11,use.n=T)
+
+#whitewine$quality = factor(whitewine$quality)
+#pred_w = round(predict(fit1, whitewine[train_white,]))
+
+#df1 = data.frame(pred_w,whitewine[train_white,]$quality)
+#table(data.frame(pred_w,whitewine[train_white,]$quality))
+#df1$acc = rep(0,1616)
+
+##mean(df1$acc)
+
+
+```
+
+#random forest regression
+```{r}
+rf_w  = randomForest(quality~.,data=whitewine2[-train_white,], ntree=100, norm.votes=F)
+print(rf_w)
+
+whitewine2$quality = factor(whitewine2$quality)
+pred_w = round(predict(rf_w, whitewine2[train_white,]))
+
+df1 = data.frame(pred_w,whitewine2[train_white,]$quality)
+table(data.frame(pred_w,whitewine2[train_white,]$quality))
+df1$acc = rep(0,1616)
+
+
+
+df1$acc = as.numeric(df1$pred_w == df1$whitewine2.train_white....quality)
+mean(df1$acc)
+
+varImpPlot(rf_w)
+```
+
+#3 levels
+```{r}
+rf_w_gba  = randomForest(gba~.-quality,data=whitewine[-train_white,], ntree=100, norm.votes=F)
+print(rf_w_gba)
+
+pred_w = predict(rf_w_gba, whitewine[train_white,])
+table(pred_w,whitewine[train_white,]$gba)
+
+df2 = data.frame(pred_w,whitewine[train_white,]$gba)
+df2$acc = as.numeric(df2$pred_w == df2$whitewine.train_white....gba)
+mean(df2$acc)
+
+```
+
+#redwine
+```{r}
+rf_r  = randomForest(quality~.,data=redwine[-train_red,], ntree=100, norm.votes=F)
+print(rf_r)
+
+redwine$quality = factor(redwine$quality)
+pred_r = round(predict(rf_r, redwine[train_red,]))
+
+df1 = data.frame(pred_r,redwine[train_red,]$quality)
+table(data.frame(pred_r,redwine[train_red,]$quality))
+df1$acc = rep(0,1066)
+
+
+
+df1$acc = as.numeric(df1$pred_r == df1$redwine.train_red....quality)
+mean(df1$acc)
+
+varImpPlot(rf_r)
+```
+
+
+
+
+
+
+
+
+

@@ -31,6 +31,31 @@
 
 ---
 
+
+<table  border="5" bordercolor="black" align="center">
+<colgroup>
+<col width="20%" />
+<col width="80%" />
+</colgroup>
+
+<thead>
+<tr class="header">
+<th align="center" >Wine Quality Prediction</th>
+<th align="center" >Description</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+  <td><a href=wine_project.html><img src="images/wine.jpg" alt="" border=3></img> </td>  
+  <td> [Here](wine_project.html) is the project. This project  </td>
+</td>
+</tr>
+
+</tbody>
+</table>
+---
+
 <table  border="5" bordercolor="black" align="center">
 <colgroup>
 <col width="20%" />
@@ -53,6 +78,7 @@
 
 </tbody>
 </table>
+
 ---
 
 <table  border="5" bordercolor="black" align="center">
@@ -130,29 +156,6 @@
 
 ---
 
-<table  border="5" bordercolor="black" align="center">
-<colgroup>
-<col width="20%" />
-<col width="80%" />
-</colgroup>
-
-<thead>
-<tr class="header">
-<th align="center" >Midterm Election Predictions</th>
-<th align="center" >Description</th>
-</tr>
-</thead>
-
-<tbody>
-<tr>
-  <td><a href=midterm_project.html><img src="images/wave.png" alt="" border=3></img> </td>  
-  <td> [Here](midterm_project.html) is the project. This project was really limited by our ability to find good data. We wanted to be able to make a prediction for each state but that kind of data is not readily available. The data I used was from 538 and was pretty general. One data set was the presidents approval rating and the other was support of either democrats or republicans for the midterm elections. I compared a linear model and a tree, but both methods came up with unrealistic results. More detailed data is absolutely necessary to make any kind of political predictions.  </td>
-</td>
-</tr>
-
-</tbody>
-</table>
----
 
 <table  border="5" bordercolor="black" align="center">
 <colgroup>
