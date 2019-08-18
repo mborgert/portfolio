@@ -40,7 +40,7 @@
 
 <thead>
 <tr class="header">
-<th align="center" >Wine Quality Prediction</th>
+<th align="center" >Wine Quality Prediction Using Random Forests</th>
 <th align="center" >Description</th>
 </tr>
 </thead>
@@ -48,7 +48,7 @@
 <tbody>
 <tr>
   <td><a href=wine_project.html><img src="images/wine.jpg" alt="" border=3></img> </td>  
-  <td> [Here](wine_project.html) is the project. This project  </td>
+  <td> [Here](wine_project.html) is the project. This project was done on a data set that can be found in the UCI Machine Learning Repository for my data mining class. It contains chemical information and quality score of both red and white Portuguese "Vinho Verde" wine. The goal is to model the quality score, a numeric from 1 to 10, of a wine based on its chemical properties. These properties include: alcohol percentage, density, which is mass of a wine, fixed acidity is the acids that give wine its flavor, volatile acidity can lead to a vinegar taste at high levels, and free sulfur dioxide prevents bacterial growth and oxidation. </td>
 </td>
 </tr>
 

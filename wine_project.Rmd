@@ -3,8 +3,7 @@ title: "Wine Quality Analysis"
 output: html_document
 ---
 
-#Data reading and packages
-```{r, message=FALSE,warning=FALSE}
+```{r, include=FALSE, echo=FALSE, message = FALSE, warning = FALSE}
 library(corrplot)
 library(ipred)
 library(randomForest)
@@ -25,30 +24,37 @@ train_white = sample(1:4898, 1616)
 train_red = sample(1:1599,1066)
 ```
 
-#Exploration
-Our goal is to model wine quality so lets take a look at that variable for both datasets. After looking at what wine reviewers look for found that alcohol and volatile acidity may be important
+This project is done on a data set that can be found in the UCI Machine Learning Repository. It contains chemical information and quality score of both red and white Portuguese "Vinho Verde" wine. The goal is to model the quality score, a numeric from 1 to 10, of a wine based on its chemical properties. These properties include: alcohol percentage, density, which is mass of a wine, fixed acidity is the acids that give wine its flavor, volatile acidity can lead to a vinegar taste at high levels, and free sulfur dioxide prevents bacterial growth and oxidation.
+
+##Exploration
+First we will look at the wine quality variable for both white and red wine.
+
 ```{r}
 par(mfrow=c(1,2))
 counts = table(whitewine$quality)
 barplot(counts, main = "White Wine")
 counts2 = table(redwine$quality)
 barplot(counts2, main = "Red Wine")
+```
 
+Here we can see that the distribution of quality scores is similar for both wines. Most wines are scored as a 5, 6, or 7. This is due to the fact that wine reviewers only give exceptional reviews to very good wines. We can already guess that any model will have a hard time predicting wines with very high or very low scores since the sample size is so small. 
+
+```{r, include=FALSE, echo=FALSE, message = FALSE, warning = FALSE}
 correlations_w = cor(whitewine2[-12], whitewine2$quality)
 correlations_w
 
 correlations_r = cor(redwine[-12], redwine$quality)
 correlations_r
 
-var(whitewine$quality)
-var(redwine$quality)
+```
 
+```{r}
 df = data.frame(correlations_w, correlations_r)
 colnames(df) = c("white wine", "red wine")
 df
 ```
 
-
+Before looking at the data I did some research on how wine quality is scored. Wine reviewers said that in general, wine with a high volatile acidity is bad. This is confirmed by these correlations between quality score and the other variables. Volatile acidity is negatively correlated, along with chlorides, total sulfur dioxide, and denisty. Interestingly, alcohol is positivly correlated with quality score. It is also the most correlated so it should be significant in modeling.  
 
 #More Exploration w/ tree
 ```{r}
@@ -59,43 +65,55 @@ tree11 <-prune(fit1,cp=.009)
 plot(tree11,uniform=T, margin=0.2)
 text(tree11,use.n=T)
 
-#whitewine$quality = factor(whitewine$quality)
-#pred_w = round(predict(fit1, whitewine[train_white,]))
-
-#df1 = data.frame(pred_w,whitewine[train_white,]$quality)
-#table(data.frame(pred_w,whitewine[train_white,]$quality))
-#df1$acc = rep(0,1616)
-
-##mean(df1$acc)
-
 
 ```
 
-#random forest regression
+Here I made a single tree on my training data to see what the splits would look like. As expected, alcohol is an important split, being first. The rest of the splits are also the highly correlated variables. 
+
+#Random Forest Regression
 ```{r}
 rf_w  = randomForest(quality~.,data=whitewine2[-train_white,], ntree=100, norm.votes=F)
 print(rf_w)
+```
+Here is a random forest on the white wine data. A regression forest was chosen since the response is numeric from 1-10. The % of variacne explained doesn't seem great, so we will look at the testing data. 
 
+```{r}
 whitewine2$quality = factor(whitewine2$quality)
 pred_w = round(predict(rf_w, whitewine2[train_white,]))
 
 df1 = data.frame(pred_w,whitewine2[train_white,]$quality)
 table(data.frame(pred_w,whitewine2[train_white,]$quality))
+```
+
+The model is good at predicted average quality wines but not great at the more extreme qualities.  
+
+```{r}
 df1$acc = rep(0,1616)
-
-
-
 df1$acc = as.numeric(df1$pred_w == df1$whitewine2.train_white....quality)
 mean(df1$acc)
+```
 
+The testing accuracy ok at 67%
+
+```{r}
 varImpPlot(rf_w)
 ```
 
+The variable important plot confirms our expectation of what variables were important for modeling. 
+ 
+
 #3 levels
+
+It is clear a regression random forest is not a fantastic way to predict wine quality. Predicting a specific score is difficult because of low sample size, so now we will try to predict a wine based on if it is good, average, or bad. A wine will be good if it is 7 or greater, average if it is a 5 or 6, and bad otherwise. 
+
 ```{r}
 rf_w_gba  = randomForest(gba~.-quality,data=whitewine[-train_white,], ntree=100, norm.votes=F)
 print(rf_w_gba)
+```
 
+Here we can see a much smaller oob error rate. Part of the reason our error is so small is because the majority of wines are actually a 5 or 6, and the model predicts 5 or 6 the most. 
+
+```{r}
 pred_w = predict(rf_w_gba, whitewine[train_white,])
 table(pred_w,whitewine[train_white,]$gba)
 
@@ -105,11 +123,20 @@ mean(df2$acc)
 
 ```
 
-#redwine
+Our testing accuracy is much better, at ~84%. 
+
+#Redwine
+
+Lets see if red wine is much different than white in results. We will use a regression forest again here.  
+
 ```{r}
 rf_r  = randomForest(quality~.,data=redwine[-train_red,], ntree=100, norm.votes=F)
 print(rf_r)
+```
 
+The model seems worse for the red wines, with even less variance explained. 
+
+```{r}
 redwine$quality = factor(redwine$quality)
 pred_r = round(predict(rf_r, redwine[train_red,]))
 
@@ -117,17 +144,16 @@ df1 = data.frame(pred_r,redwine[train_red,]$quality)
 table(data.frame(pred_r,redwine[train_red,]$quality))
 df1$acc = rep(0,1066)
 
-
-
 df1$acc = as.numeric(df1$pred_r == df1$redwine.train_red....quality)
 mean(df1$acc)
+```
+We can see the same trends here as with the white wine model, however the test accuracy is a little worse. 
 
+```{r}
 varImpPlot(rf_r)
 ```
 
-
-
-
+Here we can see that the important variables are similar, except for red wine sulphates is important. 
 
 
 
